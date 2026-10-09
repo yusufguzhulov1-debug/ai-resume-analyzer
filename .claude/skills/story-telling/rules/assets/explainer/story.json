@@ -1,0 +1,86 @@
+{
+  "_template": "Concept explainer, 6 scenes, about 60s, landscape. Metaphor over literal artwork: the stat card already carries the number, so the image should not be a chart.",
+  "slug": "replace-me",
+  "compositionId": "ReplaceMe",
+  "orientation": "landscape",
+  "fps": 30,
+  "title": {
+    "eyebrow": "IN SIXTY SECONDS",
+    "headline": "What this thing actually does",
+    "subline": "The lever behind the headline"
+  },
+  "voice": {
+    "speaker": "shubh",
+    "pace": 1.05,
+    "temperature": 0.6,
+    "languageCode": "en-IN"
+  },
+  "style": {
+    "artPrompt": "clean isometric vector illustration, bold outlines, limited palette of deep navy, warm amber and off white, simple geometric shapes, soft long shadows, editorial infographic mood without any labels, no text, no lettering, no numbers, no watermark",
+    "accent": "#7FD1FF",
+    "background": "#04060A",
+    "displayFont": "BricolageGrotesque",
+    "textFont": "Inter"
+  },
+  "references": {},
+  "scenes": [
+    {
+      "id": 0,
+      "narration": "THE SYMPTOM. Start where the viewer already lives: the thing they have noticed but cannot explain. No jargon in this scene.",
+      "stat": null,
+      "images": [
+        { "id": 1, "prompt": "An everyday scene where the symptom shows up, ordinary people, ordinary place, warm morning light." },
+        { "id": 2, "prompt": "A tight detail of the same scene that isolates the symptom, shallow depth of field." }
+      ]
+    },
+    {
+      "id": 1,
+      "narration": "NAME IT. Give the concept its name and one sentence of plain definition. This is the only scene where a term is introduced.",
+      "stat": { "value": "6.50%", "label": "CURRENT LEVEL, FEB 2026" },
+      "images": [
+        { "id": 3, "prompt": "A single strong metaphor object for the concept, a lever, a valve or a set of scales, centred, dramatic key light." }
+      ]
+    },
+    {
+      "id": 2,
+      "narration": "MECHANISM, PART ONE. What moves first when the thing changes. One step only, described as physical motion rather than theory.",
+      "stat": null,
+      "images": [
+        { "id": 4, "prompt": "The metaphor object mid motion, showing cause, isometric view, clean background." },
+        { "id": 5, "prompt": "The first thing downstream reacting to that motion, isometric, same palette." }
+      ]
+    },
+    {
+      "id": 3,
+      "narration": "MECHANISM, PART TWO. The second step, and where it reaches the viewer. Keep the same metaphor, do not introduce a new one.",
+      "stat": null,
+      "images": [
+        { "id": 6, "prompt": "The chain of consequence extended, several linked objects in a row, isometric, receding perspective." },
+        { "id": 7, "prompt": "The point where the chain touches an ordinary household or business, warm interior light." }
+      ]
+    },
+    {
+      "id": 4,
+      "narration": "WHAT CHANGES. The measurable effect, with the number spelled as words in the narration and shown as digits on the card.",
+      "stat": { "value": "Rs 1,240", "label": "EFFECT PER MONTH" },
+      "images": [
+        { "id": 8, "prompt": "A before and after pair of the same object at different scales, side by side, even lighting." }
+      ]
+    },
+    {
+      "id": 5,
+      "narration": "WHAT TO DO. One concrete action or one thing to watch next, then stop. Do not summarise what was already said.",
+      "stat": null,
+      "images": [
+        { "id": 9, "prompt": "A person taking the recommended action, calm and resolved, brighter palette than earlier frames." }
+      ]
+    }
+  ],
+  "outro": {
+    "headline": "One line to remember",
+    "subline": "SOURCE AND DATE",
+    "imageId": 3,
+    "durationInFrames": 92
+  },
+  "music": null
+}

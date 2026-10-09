@@ -1,0 +1,11 @@
+Printed Curtain
+
+The curtain engine is adapted from "Dynamic ropes 2" by Jason Labbe:
+https://openprocessing.org/sketch/533576
+
+The adaptation is distributed under Creative Commons Attribution-ShareAlike
+4.0 International (CC BY-SA 4.0):
+https://creativecommons.org/licenses/by-sa/4.0/
+
+This directory includes p5.js v1.9.4, distributed under the GNU Lesser General
+Public License v2.1. Its license notice is embedded in p5.min.js.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Style: Breakout Card"
+  short_description: "Grid page, head breaking out of a bottom card, word captions"
+  default_prompt: "Use $breakout-card with $edit-video to edit this talking head on a white grid page with my head breaking out of a card at the bottom."
+policy:
+  allow_implicit_invocation: true

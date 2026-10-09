@@ -1,0 +1,7 @@
+interface:
+  display_name: "JTX Video Skill"
+  short_description: "按标准流程制作 AI 金融口播视频"
+  default_prompt: "用 $jtxvideo-skill 处理这个口播视频，按预处理、SRT 确认、文案结构、分镜表、设计、HyperFrames 渲染和 2K60 导出的流程走。"
+
+policy:
+  allow_implicit_invocation: true

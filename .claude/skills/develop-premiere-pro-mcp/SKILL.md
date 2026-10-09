@@ -1,0 +1,90 @@
+---
+name: develop-premiere-pro-mcp
+description: Develop, debug, test, review, document, and release the premiere-pro-mcp repository. Use when changing MCP tools, schemas, server registration, CEP or UXP bridges, generated ExtendScript, authority profiles, packaging, release metadata, or compatibility claims in this repo.
+---
+
+# Develop Premiere Pro MCP
+
+Make focused, evidence-backed changes to this TypeScript MCP server. Preserve unrelated
+worktree changes and distinguish automated verification from behavior proven in a live
+Premiere Pro host.
+
+## Orient to the repository
+
+1. Read `AGENTS.md` first, then `README.md`, `SECURITY.md`, `CONTRIBUTING.md`, and
+   `RESEARCH.md` only as needed for the task. Treat current source and release metadata
+   as authoritative over dated snapshots.
+2. Inspect `git status` before editing. Do not stage, rewrite, or remove unrelated work.
+3. Trace the relevant path before changing it:
+   - `src/server.ts` assembles the MCP surface.
+   - `src/tools/` contains tool schemas and handlers.
+   - `src/bridge/` implements host communication.
+   - `cep-plugin/` is the broad production bridge.
+   - `uxp-plugin/` is capability-aware and supports only its declared Premiere APIs.
+4. Use Node.js 24 for development when available; preserve the package's Node 20.19+
+   runtime floor. Install deterministically with `npm ci` when dependencies are missing.
+
+## Implement safely
+
+- Reuse nearby helpers and module patterns before adding abstractions or dependencies.
+- Keep tool schemas, descriptions, registrations, structured results, authority profiles,
+  tests, documentation, generated catalogs, and reported counts synchronized.
+- Generate ExtendScript as ECMAScript 3: use `var`, traditional functions and loops, and
+  avoid arrows, `let`, `const`, template literals, and other modern runtime syntax.
+- Escape every user-controlled string with existing helpers before embedding it in a
+  generated script. Never interpolate raw paths, names, expressions, or prompts.
+- Keep raw scripting disabled unless the explicit `unsafe-script` capability is enabled.
+- Prefer documented Premiere APIs. Label QE DOM behavior experimental.
+- Verify mutation postconditions. Do not treat a host API return value alone as proof of
+  success, and do not silently fall back from failed UXP work to CEP or QE.
+- Premiere metadata is several documented surfaces, not one blob: Project-panel
+  column JSON (`getProjectColumnsMetadata`), Premiere-private project metadata XML,
+  file/clip XMP, panel-layout/schema XML, plus adjacent color-label, interpretation,
+  marker, and transcript tools. Documented `ppro.Metadata.*` methods are already
+  mapped. Do not wrap undocumented QE metadata, dump unbounded packets, or treat
+  `premiere://project/metadata` as XMP. Field-level inspect/update is bounded
+  (`uxp.XMPMeta` / AdobeXMPScript, 256 fields, sensitive EXIF omitted by default,
+  field readback). CEP still accepts a complete XML payload plus `updatedFields`.
+  Adobe exposes no field-level schema enumerator. Keep C2PA as beta until a
+  stable host pin exists. When adding metadata behavior, update
+  `src/workflows/agent-instructions.ts`, the workflow catalog prompt, and both
+  `edit-premiere-project` skill copies together.
+- Preserve private-directory ownership checks, authentication, size limits, secret
+  handling, and telemetry privacy. Never collect prompts, arguments, results, tokens,
+  IP addresses, project paths, media names, or person profiles.
+
+## Test proportionally
+
+1. Add or update tests for behavior, failure paths, validation, escaping, authorization,
+   registration, and metadata affected by the change.
+2. Run the narrowest relevant tests while iterating.
+3. Run `npm run check` before completion. Run `npm run test:coverage` when changing
+   coverage-sensitive behavior.
+4. Inspect the final diff and status so generated output or unrelated files are not
+   included accidentally.
+5. Treat build, unit tests, mocks, and CI as package evidence only. Require a supported
+   Premiere host and the applicable running CEP or UXP bridge for live-host claims.
+
+## Handle releases and compatibility claims
+
+- Follow `docs/release-conventions.md`: GitHub release titles equal their Git tags,
+  exactly `v<SemVer>` (for example, `v1.19.0` or `v1.20.0-rc.1`). Put summaries in
+  release bodies; omit `v` in package and manifest versions. Preserve the README
+  `### Latest release:` heading and existing changelog heading format.
+- Use `scripts/normalize-release-names.mjs` to preview title drift, `--check` to
+  fail on drift, and `--apply` for authorized repairs with GitHub readback. Historical
+  cleanup edits display titles only; never retag or republish existing versions.
+  A naming task does not authorize a new publication.
+- Search all version-bearing package, lock, manifest, marketplace, MCP configuration,
+  updater, and installation files when changing a version.
+- After an npm release is verified, update the README `### Latest release:` heading, README
+  install commands, both plugin `.mcp.json` pins, and both `edit-premiere-project` skill pins
+  together; `tests/release-metadata.test.ts` and `tests/codex-plugin.test.ts` guard them.
+- The website lives in `leancoderkavy/premiere-pro-mcp-site` and syncs published npm facts
+  automatically. Do not edit site facts from this repository.
+- Verify the exact commit, checks, registry artifact, release assets, deployment health,
+  and host state separately when the task includes those outcomes.
+- Never claim a commit, push, merge, publication, deployment, or live Premiere result
+  without direct evidence from that layer.
+- Report what changed, exact checks run, failures or skipped checks, and whether live CEP
+  or UXP verification was performed.

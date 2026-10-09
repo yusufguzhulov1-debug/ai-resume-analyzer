@@ -1,0 +1,164 @@
+ 工作流明细（tryworld-koubo）
+
+## 路径约定（本机环境）
+
+- 工作区根目录：由内容主题 JSON 的 `content.topic_dedup_dir` 定义（默认 `E:\Codex口播视频`；下文以 `<WORKSPACE>` 代指；项目按 `<slug>` 建独立子文件夹）
+- 技能根目录：`$env:USERPROFILE\.agents\skills\tryworld-koubo`（下文以 `<SKILL_DIR>` 代指）
+- 兄弟技能：`<SKILL_DIR>` 同级目录下的 `tryworld-paper`、`tryworld-topics`、`qq-email`
+- 换机器或更换安装位置时：先替换本小节变量，再执行正文命令；正文中的绝对路径均为本机实际值，对应上述变量
+
+## 模式判定规则
+
+按以下顺序判定，命中即停：
+
+1. 子命令关键词："只要选题" → 子流程 S1；"只要写稿" → S2；"只优化""只出优化稿""不出片" → 模式 A 到闸门为止。
+2. 选题意图："帮我选题""这周做什么口播""最近有什么值得做的 AI 选题""AI 口播选题""本周 AI 圈""做个 AI 资讯盘点" → 模式 B。
+3. 稿子输入：用户粘贴口播稿正文（通常 >300 字），或给出 .md/.txt 稿子文件路径 → 模式 A。
+4. 无法判定时，向用户确认："你是要选题，还是要直接优化现有稿子？"
+
+## 模式 A：直接给稿 → 优化 → 出片
+
+1. 通读稿子，理解主题、受众、核心结论、章节结构。
+2. 进入 `$tryworld-paper`：
+   - 优化并净化（流量第一性原理；清除章节标签等写作标记）；
+   - 活人感改稿七遍（见 tryworld-paper workflow.md 1.2.1）；
+   - 硬禁项检查：净化后正文与 `titles.txt` 运行 `python -X utf8 "$env:USERPROFILE\.agents\skills\tryworld-paper\scripts\check_prose.py" <文件>`，清零才允许展示；
+   - 展示优化稿 + 优化说明 + 元素落点 + 数据来源清单；
+   - **闸门：等用户确认**；未确认禁止配音/构图/渲染。
+3. 确认后按 paper-algorithm 流程：分段 → 配音（默认云希，可指定音色） → 场景规划 → 构图 → lint/validate/inspect → 渲染 → 封面 → 标题。
+4. 交付到项目 `outputs/`，并补 `发布计划.txt`。
+
+## 模式 B：选题 → 写稿 → 优化 → 出片
+
+### B1 拉数据与产出选题
+
+1. 进入 `$tryworld-topics`：
+   - 运行 `python -X utf8 scripts/fetch_aihot.py`（跨平台规范路径；默认 7 天、100 条，落盘 `work/aihot/`；`--base-url` 可指定其他 AIHOT 兼容端点）；
+   - 读 `references/selection-rules.md`；
+   - 产出 3-8 个候选选题（选题名、为什么选、核心素材+原文链接、切入角度、优先级、命中原理）。
+
+### B2 去重判定（以工作区实际成片为准）
+
+扫描 `<WORKSPACE>`（见上方路径约定）一级子文件夹，并**递归**查找其中的 outputs 目录（项目可能嵌套，如 deepseek-v4-flash）：
+
+```powershell
+Get-ChildItem -LiteralPath "<WORKSPACE>" -Directory | ForEach-Object {
+  $proj = $_.FullName
+  $outs = Get-ChildItem -LiteralPath $proj -Recurse -Directory -Filter "outputs" -ErrorAction SilentlyContinue
+  $done = $false
+  foreach ($o in $outs) {
+    $mp4 = @(Get-ChildItem -LiteralPath $o.FullName -Filter *.mp4 -ErrorAction SilentlyContinue)
+    $png = @(Get-ChildItem -LiteralPath $o.FullName -Filter *.png -ErrorAction SilentlyContinue)
+    if ($mp4.Count -ge 1 -and $png.Count -ge 2) { $done = $true; break }
+  }
+  [PSCustomObject]@{ Folder = $_.Name; Done = $done }
+}
+```
+
+判定规则：
+
+- 候选选题按关键词与该文件夹名/文件夹内口播稿标题做包含匹配（如"中美 AI"命中 `zhongmei-ai`）。
+- 命中且该 outputs 目录同时存在 ≥1 个 *.mp4 与 ≥2 个封面 png（横竖两张）→ **已做，排除**，并同步记录到 `tryworld-topics/references/done-topics.md`（缓存）。
+- 未命中，或命中的 outputs 缺视频/缺封面 → **未做，可推荐**。
+
+### B3 闸门 1：选题清单
+
+- 展示清单，停，等用户挑选；用户可"换一批"或给自定义主题。
+- 用户未选择前，禁止进入写稿。
+
+### B4 写稿初稿
+
+按 SKILL.md"写稿规范"：
+
+- 标准版 2500-2800 字（约 9-10 分钟）；短版（30-60 秒）按用户要求。
+- 开场钩子 → 3-5 层结构 → 结论 + 固定签名。
+- 数据带原文链接；未核实标"待核实"。
+- 写作标记不进正文。
+- 活人感写稿（见 SKILL.md"活人感写稿规则"）：
+  - 动笔前内部定"说话位置"：谁在说、凭什么知道、想说什么、判断依据到哪里为止、读者下句会追问什么；
+  - 材料自检：2500-2800 字需能列出足够具体材料，不足先补检索（AIHOT 链接/联网），仍不足写短稿标"待补料"，不新增闸门；
+  - 写给耳朵：新名词第一次说全称、代词有对象、数字只留必须记住的；一口气说不完就拆句；读出声计时，拗口必改；
+  - 段落推进：每段新增事实/动作/例子/区别/后果，后段接住前段的问题，同义换说删掉；
+  - 禁假细节：无来源的时间、神态、天气、摆设、对白一律不用；
+  - 硬禁项预告：冒号、破折号、翻案句、硬停词、模型路标、黑话在净化后正文与标题中全部禁用。
+- 初稿不单独停（按用户设定：只在选题与优化稿两处停）。
+
+### B5 优化与闸门 2
+
+- 进入 `$tryworld-paper` 优化净化（含活人感改稿七遍），净化后正文与 `titles.txt` 先跑 `check_prose.py` 清零硬禁项，再展示优化稿 + 说明 + 数据来源。
+- **闸门 2：等用户确认**；确认后出片，未确认禁止继续。
+
+### B6 去重记录
+
+- 用户确认开做后，向 `tryworld-topics/references/done-topics.md` 追加一行（日期、选题、形式）。
+
+## 子命令
+
+- S1 只要选题：B1 → B2 → B3，停止。
+- S2 只要写稿：用户给主题/素材 → 按写稿规范产出初稿 → 展示，停止。
+- S3 只优化不出片：模式 A 步骤 1-2，停止。
+
+## 交付清单与发布计划
+
+成片交付 `outputs/` 应包含：
+
+- 主视频（*.mp4，烧录字幕）
+- 口播稿（含日期，如 `2026-08-04_主题_口播稿.md`）
+- cover_4x3.png / cover_3x4.png
+- titles.txt
+- narration.mp3、sentences.json（字幕时间轴）、plan.json
+- 发布计划.txt（内容以当前主题文件的 `publish_plan` 为准，见下方模板）
+
+发布计划.txt 内容以当前主题文件的 `publish_plan` 字段为准。自定义品牌主题时，在主题 JSON 的 `publish_plan.platforms` 数组中定义你的平台与时间，脚本与文档将自动使用。默认主题（试界TryWorld）的值如下：
+```
+试界TryWorld · 平台发布计划
+小红书：中午 12:30
+抖音：晚上 19:30
+B站：晚上 20:30
+微信视频号：晚上 20:30
+```
+
+### 成片交付邮件通知（自动执行）
+
+成片交付后自动运行（不阻塞交付）：
+
+```powershell
+python -X utf8 "$env:USERPROFILE\.agents\skills\tryworld-koubo\scripts\notify_delivery.py" --project-dir "E:\Codex口播视频\<项目slug>"
+```
+
+（`scripts/notify_delivery.ps1` 为 Windows PowerShell 回退，已弃用，文件头有 DEPRECATED 声明；仅在没有 Python 环境时使用，且不支持下文「凭证读取顺序」中的注册表回退。）
+
+- 邮件主题与发布计划从主题文件（`paper-algorithm.json` 或 `--theme-file` 指定的文件）读取 `brand.platform_name` 与 `publish_plan`；文件缺失或字段不存在时回退到硬编码默认值。
+
+- 邮件内容：主题 `✅ {品牌名} 口播成片已交付 · <项目> · <日期>`（品牌名取自主题文件 `brand.platform_name`）；正文 = 完成提示 + 【平台标题】文字（读取 titles.txt 直接写入正文，不作为附件）+ 【发布计划】（内容取自主题文件 `publish_plan`）。
+- 附件规则（QQ 邮箱附件上限约 50MB，含 base64 开销，单文件安全阈值 35MB）：
+  - 横版封面 / 竖版封面：总是作为附件；
+  - 平台标题：不附文件，文字写入正文；
+  - 主视频：≤35MB 作为附件；超过则跳过并在正文注明文件名与大小。
+- 编码处理：脚本用 .NET Process 直连 node（参数 UTF-16、正文 UTF-8 字节写 stdin、附件 `--attach` 传路径），避免 PowerShell 5.1 中文乱码；`qq-email` 的 `send.js` 已支持 `--attach <文件>`（可重复）。
+- 如需把大视频随邮件发送：先将视频压到 35MB 内（如降低码率/分辨率），或改用网盘/仓库链接。
+- 前置：调用 `$qq-email` 的 `send.js`，需要环境变量 `QQ_EMAIL_ACCOUNT`（收件人=自己）与 `QQ_EMAIL_AUTH_CODE`（IMAP/SMTP 授权码）。
+- 凭证未配置或 send.js 缺失：脚本警告并跳过，不影响交付。
+- 凭证读取顺序：进程环境变量 → 注册表用户环境变量（HKCU:\Environment，仅 .ps1 回退支持）→ 缺失则跳过；.py 规范路径只读进程环境变量，setx 配置后需重开终端（或在本会话先 `$env:` 赋值）再运行。
+- 预览不发送：加 `--dry-run` 参数（.ps1 回退为 `-DryRun`）。
+- 配置方式（用户自行执行，勿在对话中粘贴授权码）：
+  `setx QQ_EMAIL_ACCOUNT "你的QQ邮箱"` 与 `setx QQ_EMAIL_AUTH_CODE "授权码"`，重开终端生效。
+
+## 异常处理
+
+- AIHOT 请求 403/失败：检查 User-Agent；重试一次；仍失败则说明并暂停。
+- 无当日日报：拉昨日日报或改用精选条目。
+- 用户对选题清单不满意：换一批（重拉或放宽时间窗/分类）或接受自定义主题。
+- 稿子超过 10 分钟：按 paper-algorithm 规则压缩核心精华。
+- 用户中途改需求（如"改成短版""只做选题"）：重新判定模式并调整流程。
+- 用户提供的稿子含写作标记/占位符：交给 paper-algorithm 净化，不在入口处理。
+
+## 测试要点
+
+- T1 模式 A：贴稿 → 优化稿确认（不渲染）。
+- T2 去重：已做（有视频+封面）排除；未做保留。
+- T3 模式 B 全链：选题 → 闸门1 → 写稿 → 优化稿 → 闸门2。
+- T4 交付：outputs/ 含视频、口播稿、横竖封面、标题、发布计划.txt。
+- T5 子命令：S1/S2/S3 只做对应步骤。
+- T6 校验：出片链路校验以 `$tryworld-paper` 为准——`npx hyperframes lint` / `npx hyperframes validate` / `npx hyperframes inspect --strict` 全部通过（错误与警告清零）才可交付。
+- T6 编码约定：`.ps1` 脚本文件用 UTF-8 带 BOM（兼容 PowerShell 5.1 中文读取）；交付物（口播稿/标题/字幕/时间轴）用 UTF-8 无 BOM。

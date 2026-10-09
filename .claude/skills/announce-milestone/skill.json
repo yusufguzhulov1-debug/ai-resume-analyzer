@@ -1,0 +1,154 @@
+{
+  "id": "announce-milestone",
+  "title": "Announce milestone",
+  "description": "Funding rounds, ARR, GitHub stars, user and download counts, acquisitions: one number made to land. Covers what earns a milestone video, the count as the hook from frame 0, a clock that never parks (count capped at 40% of the film, the breath before the land), the subject's own object on the same clock, the 1.06 land punch and confetti, number sizing by width, the gratitude beat with an image, a living end card, the tick-riser-impact sound, and beat sheets for 10, 15, 20 and 30 seconds. Load it when the content is a number going up with no feature to demonstrate.",
+  "summary": "One number made to land: the count as the hook from frame 0, a clock that never parks, the 1.06 punch and confetti, thanks you can see.",
+  "kind": "workflow",
+  "category": "Announcement",
+  "tags": [
+    "milestone",
+    "funding",
+    "metrics",
+    "count-up",
+    "announcement",
+    "github-stars",
+    "celebration"
+  ],
+  "aspects": [
+    "16:9",
+    "1:1",
+    "9:16"
+  ],
+  "duration": {
+    "minSeconds": 8,
+    "maxSeconds": 30
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "launch-taste"
+    },
+    {
+      "kind": "capability",
+      "id": "voiceover",
+      "why": "The meaning and gratitude lines, when the cut is narrated."
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "Real contributor avatars and customer or investor logos."
+    },
+    {
+      "kind": "capability",
+      "id": "sfx",
+      "why": "Ticks during the count, a riser into the land and an impact on it."
+    },
+    {
+      "kind": "capability",
+      "id": "music",
+      "why": "A bright track whose downbeat the land falls on."
+    },
+    {
+      "kind": "capability",
+      "id": "web-research",
+      "why": "Checking a public count before it is shown."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "The ease, the land frame and digit stability are judged on captured frames."
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Measuring the export's loudness."
+    },
+    {
+      "kind": "skill",
+      "id": "three-look",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-transitions",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ],
+      "why": "Confetti on the land, avatars and logos."
+    }
+  ],
+  "route": {
+    "deliverable": "An 8–30 second celebration of one number (stars, users, revenue, a funding round) that lands, then says thank you",
+    "inputs": [
+      "data",
+      "brief"
+    ],
+    "priority": 25,
+    "askFirst": [
+      "What is the exact number, and is it public?",
+      "Who is it thanking?",
+      "Where does it play: X or LinkedIn, a site, or Reels and TikTok?"
+    ]
+  },
+  "models": [
+    {
+      "purpose": "voice",
+      "model": "ElevenLabs v3",
+      "via": "voiceover",
+      "note": "Warm, not triumphant. The number does the work."
+    }
+  ],
+  "triggers": [
+    "we hit 10k github stars",
+    "we just hit a funding milestone, make a video",
+    "celebrate our star count",
+    "announce our user count",
+    "make a video about our ARR",
+    "funding round announcement video",
+    "we got acquired, need a video",
+    "one million downloads celebration"
+  ],
+  "templates": [
+    "github-star-announcement",
+    "github-star-count-announcement",
+    "lovable-funding-announcement"
+  ],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.1.3",
+  "icon": "📈"
+}

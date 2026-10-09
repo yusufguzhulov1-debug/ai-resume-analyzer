@@ -1,0 +1,441 @@
+<!doctype html>
+<!-- SOURCE FILE (16:9 web hero: silent, a seamless loop). Edit src.html.tmpl, then run build.py to write index.html.
+     Per-app text, colours and screens live ONLY in CONFIG below. Timing lives ONLY in the double-brace tokens
+     DURATION and calc (16:9 has no beat grid; see build.py). Loop contract: every animated property ends at the
+     value it has at t = 0, and the last 5 % of the loop (at most 0.4 s) is at rest. See references/hero.md. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width={{WIDTH}}, height={{HEIGHT}}" />
+    <title>App promo hero</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      // ====================== CONFIG: every per-app value ======================
+      // Every claim here must come from the app's site, store listing or its own strings.
+      const CONFIG = /*CONFIG*/ {
+        "lang": "en",
+        "font": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+        "colors": {
+          "bg": "#1F4FD1",
+          "bgDeep": "#0E2A7A",
+          "surface": "#F4F6FB",
+          "ink": "#0B1020",
+          "accent": "#FFD23F",
+          "accentInk": "#1A1400",
+          "drop": "#E8453C",
+          "card": "#FFFFFF",
+          "cardInk": "#0B1020",
+          "chipBg": "#E6ECFF",
+          "chipInk": "#1F3FA8"
+        },
+        "brand": { "name": "App Name", "iconText": "A", "icon": "" },
+        "headline": ["YOUR HEADLINE", "IN THREE", "SHORT LINES"],
+        "sub": "One true sentence from the store listing.",
+        "heroCard": { "title": "A real item from the app", "sub": "Where it lives", "chip": "Its real status" },
+        "screens": [
+          {
+            "title": "Screen title",
+            "rows": [
+              { "title": "First row", "sub": "Detail", "chip": "Label" },
+              { "title": "Second row", "sub": "Detail", "chip": "Label" },
+              { "title": "Third row", "sub": "Detail", "chip": "Label" }
+            ],
+            "button": "Primary action"
+          },
+          {
+            "title": "Second screen",
+            "rows": [
+              { "title": "Result one", "sub": "Detail", "chip": "Label" },
+              { "title": "Result two", "sub": "Detail", "chip": "Label" },
+              { "title": "Result three", "sub": "Detail", "chip": "Label" }
+            ],
+            "button": "Next action"
+          }
+        ],
+        "aiLabel": "AI-generated"
+      } /*END CONFIG*/;
+    </script>
+    <style>
+      @font-face {
+        font-family: "Reel";
+        src: local("Inter"), local("Inter Variable");
+        font-weight: 100 900;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: {{WIDTH}}px;
+        height: {{HEIGHT}}px;
+        overflow: hidden;
+        background: var(--bg-deep);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Reel", var(--font);
+        color: #ffffff;
+      }
+      [data-cfg] {
+        white-space: pre-line;
+      }
+
+      /* ---------- background: radial only (linear full-screen gradients band) ---------- */
+      .bgl {
+        position: absolute;
+        inset: 0;
+      }
+      #bg-main {
+        background: radial-gradient(ellipse 80% 90% at 68% 45%, var(--bg) 0%, var(--bg) 40%, var(--bg-deep) 100%);
+      }
+      #bg-glow {
+        position: absolute;
+        left: 1000px;
+        top: 90px;
+        width: 880px;
+        height: 880px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 85% 80% at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.35) 100%);
+      }
+
+      /* ---------- the hero: one scene, from t = 0 to the end ---------- */
+      .scene {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        perspective: 1800px;
+        perspective-origin: 1440px 540px;
+      }
+      #left {
+        position: absolute;
+        left: 120px;
+        top: 130px;
+        width: 900px;
+      }
+      #brand {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      #icon {
+        flex: none;
+        width: 96px;
+        height: 96px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-deep);
+        border: 3px solid rgba(255, 255, 255, 0.35);
+        color: #ffffff;
+        font-size: 56px;
+        font-weight: 900;
+        overflow: hidden;
+      }
+      #icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #brand-name {
+        font-size: 48px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+      #headline {
+        margin-top: 56px;
+      }
+      .hl-line {
+        display: block;
+        font-size: 112px;
+        font-weight: 900;
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+        text-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      }
+      .hl-line:nth-child(even) {
+        color: var(--accent);
+      }
+      #sub {
+        margin-top: 40px;
+        font-size: 40px;
+        font-weight: 700;
+        line-height: 1.25;
+        max-width: 820px;
+      }
+      #hero-card {
+        position: absolute;
+        left: 120px;
+        bottom: 96px;
+      }
+
+      .card {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        padding: 26px 30px;
+        border-radius: 34px;
+        background: var(--card);
+        color: var(--card-ink);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+      }
+      .card .tile {
+        flex: none;
+        width: 92px;
+        height: 92px;
+        border-radius: 24px;
+        background: var(--chip-bg);
+      }
+      .card h6 {
+        font-size: 38px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .card .sub {
+        font-size: 28px;
+        opacity: 0.7;
+        margin-top: 4px;
+      }
+      .chip {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-size: 26px;
+        font-weight: 700;
+        background: var(--chip-bg);
+        color: var(--chip-ink);
+      }
+      .tapdot {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        margin: -55px 0 0 -55px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.85);
+        border: 5px solid rgba(0, 0, 0, 0.25);
+        z-index: 30;
+        opacity: 0;
+      }
+      .tapring {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        margin: -55px 0 0 -55px;
+        border-radius: 50%;
+        border: 7px solid var(--accent);
+        z-index: 29;
+        opacity: 0;
+      }
+
+      /* ---------- the phone: 780x1500, scaled to 0.6 in the script; its middle is at x 1440, y 510 ---------- */
+      #phone {
+        position: absolute;
+        left: 1050px;
+        top: -240px;
+        width: 780px;
+        height: 1500px;
+        border-radius: 96px;
+        background: #0c0c0e;
+        padding: 22px;
+        box-shadow: 0 50px 120px rgba(0, 0, 0, 0.35);
+      }
+      #screen {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 76px;
+        overflow: hidden;
+        background: var(--surface);
+      }
+      .scr {
+        position: absolute;
+        inset: 0;
+        padding: 110px 36px 40px;
+        color: var(--ink);
+      }
+      .scr h5 {
+        font-size: 50px;
+        font-weight: 900;
+        margin-bottom: 34px;
+      }
+      .scr .card {
+        margin-bottom: 24px;
+      }
+      .scr .btn {
+        position: absolute;
+        left: 36px;
+        right: 36px;
+        bottom: 70px;
+        height: 110px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        font-weight: 800;
+        background: var(--bg);
+        color: #ffffff;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="{{WIDTH}}" data-height="{{HEIGHT}}" data-format="{{FORMAT}}" data-duration="{{DURATION}}">
+      <div id="bg">
+        <div id="bg-main" class="bgl"></div>
+        <div id="bg-glow"></div>
+        <div id="vignette"></div>
+      </div>
+
+      <section id="s1" class="clip scene" data-start="0" data-duration="{{DURATION}}" data-track-index="1">
+        <div id="left">
+          <div id="brand">
+            <div id="icon" data-cfg="brand.iconText"></div>
+            <div id="brand-name" data-cfg="brand.name"></div>
+          </div>
+          <div id="headline">
+            <div class="hl-line" data-cfg="headline.0"></div>
+            <div class="hl-line" data-cfg="headline.1"></div>
+            <div class="hl-line" data-cfg="headline.2" data-optional></div>
+          </div>
+          <div id="sub" data-cfg="sub"></div>
+        </div>
+
+        <div id="hero-card">
+          <div class="card">
+            <div class="tile"></div>
+            <div>
+              <h6 data-cfg="heroCard.title"></h6>
+              <div class="sub" data-cfg="heroCard.sub"></div>
+              <div class="chip" data-cfg="heroCard.chip"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="phone">
+          <div id="screen">
+            <div class="scr" id="scr-a">
+              <h5 data-cfg="screens.0.title"></h5>
+              <div class="card"><div class="tile"></div><div><h6 data-cfg="screens.0.rows.0.title"></h6><div class="sub" data-cfg="screens.0.rows.0.sub"></div><div class="chip" data-cfg="screens.0.rows.0.chip"></div></div></div>
+              <div class="card"><div class="tile"></div><div><h6 data-cfg="screens.0.rows.1.title"></h6><div class="sub" data-cfg="screens.0.rows.1.sub"></div><div class="chip" data-cfg="screens.0.rows.1.chip"></div></div></div>
+              <div class="card"><div class="tile"></div><div><h6 data-cfg="screens.0.rows.2.title"></h6><div class="sub" data-cfg="screens.0.rows.2.sub"></div><div class="chip" data-cfg="screens.0.rows.2.chip"></div></div></div>
+              <div class="btn" id="a-btn" data-cfg="screens.0.button"></div>
+            </div>
+            <div class="scr" id="scr-b">
+              <h5 data-cfg="screens.1.title"></h5>
+              <div class="card"><div class="tile"></div><div><h6 data-cfg="screens.1.rows.0.title"></h6><div class="sub" data-cfg="screens.1.rows.0.sub"></div><div class="chip" data-cfg="screens.1.rows.0.chip"></div></div></div>
+              <div class="card"><div class="tile"></div><div><h6 data-cfg="screens.1.rows.1.title"></h6><div class="sub" data-cfg="screens.1.rows.1.sub"></div><div class="chip" data-cfg="screens.1.rows.1.chip"></div></div></div>
+              <div class="card"><div class="tile"></div><div><h6 data-cfg="screens.1.rows.2.title"></h6><div class="sub" data-cfg="screens.1.rows.2.sub"></div><div class="chip" data-cfg="screens.1.rows.2.chip"></div></div></div>
+              <div class="btn" id="b-btn" data-cfg="screens.1.button"></div>
+            </div>
+          </div>
+          <!-- the tap points sit in the phone, on the button (390, 1353 in phone pixels), so they ride its drift -->
+          <div class="tapdot" id="tap-a" style="left: 390px; top: 1353px"></div>
+          <div class="tapring" id="ring-a" style="left: 390px; top: 1353px"></div>
+          <div class="tapdot" id="tap-b" style="left: 390px; top: 1353px"></div>
+          <div class="tapring" id="ring-b" style="left: 390px; top: 1353px"></div>
+        </div>
+      </section>
+      <!-- the AI-generated label (CONFIG.aiLabel) is added by build.py's script at the end of the page -->
+    </div>
+
+    <script>
+      // ---------- CONFIG -> DOM (runs before the timeline is built) ----------
+      const cfgGet = (path) => {
+        const v = path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), CONFIG);
+        if (v === undefined) throw new Error(`CONFIG has no value for "${path}"`);
+        return v;
+      };
+      // an optional element (a headline of two lines has no third) is empty when its value is missing
+      const cfgOpt = (path) => {
+        try { return cfgGet(path); } catch (e) { return ""; }
+      };
+      // an empty string hides the element (e.g. a screen with no bottom button, a row with no chip)
+      document.querySelectorAll("[data-cfg]").forEach((el) => {
+        const v = el.hasAttribute("data-optional") ? String(cfgOpt(el.dataset.cfg)) : String(cfgGet(el.dataset.cfg));
+        el.textContent = v;
+        if (v === "") el.style.display = "none";
+      });
+      const css = document.documentElement.style;
+      const C = CONFIG.colors;
+      css.setProperty("--font", CONFIG.font);
+      [["--bg", C.bg], ["--bg-deep", C.bgDeep], ["--surface", C.surface], ["--ink", C.ink], ["--accent", C.accent],
+       ["--accent-ink", C.accentInk], ["--card", C.card], ["--card-ink", C.cardInk],
+       ["--chip-bg", C.chipBg], ["--chip-ink", C.chipInk]].forEach(([k, v]) => css.setProperty(k, v));
+      document.documentElement.lang = CONFIG.lang;
+      if (CONFIG.brand.icon) {
+        const icon = document.getElementById("icon");
+        icon.textContent = "";
+        icon.style.display = ""; // iconText is "" when an image is used; show the tile again
+        const img = document.createElement("img");
+        img.src = CONFIG.brand.icon;
+        img.alt = "";
+        icon.appendChild(img);
+      }
+
+      // ---------- the loop: every property below ends at its t = 0 value ----------
+      const DURATION = {{DURATION}};
+      // the last 5 % of the loop (at most 0.4 s) is at rest: nothing moves, nothing is still easing
+      const REST = Math.min(0.4, DURATION * 0.05);
+      const END = DURATION - REST;
+      const tl = gsap.timeline({ paused: true });
+      // Every fromTo whose from-pose is not the pose at t = 0 uses immediateRender:false, or it shows at t=0.
+      const tap = (dot, ring, t) => {
+        tl.fromTo(dot, { x: -110, y: 130, opacity: 0, scale: 1 }, { x: 0, y: 0, opacity: 1, duration: 0.35, ease: "power2.inOut", immediateRender: false }, t - 0.4);
+        tl.to(dot, { scale: 0.7, duration: 0.07, ease: "power1.in" }, t - 0.05);
+        tl.to(dot, { scale: 1, opacity: 0, duration: 0.25, ease: "power1.out" }, t + 0.03);
+        tl.fromTo(ring, { scale: 0.6, opacity: 1 }, { scale: 2.8, opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, t);
+        tl.set(ring, { scale: 1 }, t + 0.5);
+      };
+      const press = (btn, t) =>
+        tl.fromTo(btn, { scale: 1 }, { keyframes: { scale: [1, 0.94, 1.04, 1] }, duration: 0.3, ease: "none", immediateRender: false }, t - 0.03);
+
+      gsap.set("#phone", { scale: 0.6, transformOrigin: "50% 50%" });
+      gsap.set("#scr-b", { x: 760, opacity: 0 }); // B waits to the right, clipped by #screen and hidden: check measures clipped text too
+
+      // the phone drifts out and back: y and a few degrees of rotationY, ease-in-out at both ends
+      tl.to("#phone", { y: -22, rotationY: -6, duration: END / 2, ease: "sine.inOut" }, 0);
+      tl.to("#phone", { y: 0, rotationY: 0, duration: END / 2, ease: "sine.inOut" }, END / 2);
+      // the card floats the other way
+      tl.to("#hero-card", { y: -14, duration: END / 2, ease: "sine.inOut" }, 0);
+      tl.to("#hero-card", { y: 0, duration: END / 2, ease: "sine.inOut" }, END / 2);
+      // the glow drifts and returns
+      tl.to("#bg-glow", { scale: 1.15, x: -60, y: 30, duration: END / 2, ease: "sine.inOut" }, 0);
+      tl.to("#bg-glow", { scale: 1, x: 0, y: 0, duration: END / 2, ease: "sine.inOut" }, END / 2);
+
+      // screen A -> B (a slide, not a crossfade: no double exposure), tap on A's button first
+      const toB = {{calc DURATION*0.36}};
+      const toA = {{calc DURATION*0.64}};
+      tap("#tap-a", "#ring-a", toB - 0.15);
+      press("#a-btn", toB - 0.15);
+      tl.to("#scr-a", { x: -760, duration: 0.45, ease: "power3.inOut" }, toB);
+      tl.to("#scr-a", { opacity: 0, duration: 0.02 }, toB + 0.45);
+      tl.fromTo("#scr-b", { x: 760, opacity: 1 }, { x: 0, opacity: 1, duration: 0.45, ease: "power3.inOut", immediateRender: false }, toB);
+      // ... and B -> A: the return slide ends before the rest window
+      tap("#tap-b", "#ring-b", toA - 0.15);
+      press("#b-btn", toA - 0.15);
+      tl.set("#scr-a", { opacity: 1 }, toA);
+      tl.to("#scr-a", { x: 0, duration: 0.45, ease: "power3.inOut" }, toA);
+      tl.to("#scr-b", { x: 760, duration: 0.45, ease: "power3.inOut" }, toA);
+      tl.to("#scr-b", { opacity: 0, duration: 0.02 }, toA + 0.45);
+
+      // the timeline is exactly DURATION long: an empty tween at the end pads it
+      tl.set({}, {}, DURATION);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

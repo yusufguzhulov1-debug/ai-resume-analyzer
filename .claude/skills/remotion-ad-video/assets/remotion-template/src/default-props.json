@@ -1,0 +1,401 @@
+{
+  "brandName": "Acme",
+  "productName": "Acme Focus Lamp",
+  "tagline": "Better light for focused work",
+  "platform": "instagram-reel",
+  "durationSeconds": 15,
+  "primaryColor": "#7CFF6B",
+  "backgroundColor": "#151515",
+  "fontPreset": "condensed-impact",
+  "cta": "Shop now",
+  "offer": "Launch offer available today.",
+  "disclaimer": "Replace all placeholder claims and visuals before commercial use.",
+  "captions": [
+    {
+      "text": "Your desk deserves better light",
+      "startFrame": 14,
+      "endFrame": 56,
+      "words": [
+        { "w": "Your", "atFrame": 14 },
+        { "w": "desk", "atFrame": 20 },
+        { "w": "deserves", "atFrame": 28 },
+        { "w": "BETTER", "atFrame": 38, "emphasis": true },
+        { "w": "light", "atFrame": 46 }
+      ]
+    },
+    {
+      "text": "Stop fighting the glare",
+      "startFrame": 72,
+      "endFrame": 168,
+      "words": [
+        { "w": "Stop", "atFrame": 72 },
+        { "w": "fighting", "atFrame": 80 },
+        { "w": "the", "atFrame": 90 },
+        { "w": "GLARE", "atFrame": 96, "emphasis": true }
+      ]
+    },
+    {
+      "text": "Angle, dim, and focus in seconds",
+      "startFrame": 196,
+      "endFrame": 320,
+      "words": [
+        { "w": "Angle,", "atFrame": 196 },
+        { "w": "dim,", "atFrame": 208 },
+        { "w": "and", "atFrame": 220 },
+        { "w": "focus", "atFrame": 228 },
+        { "w": "in", "atFrame": 240 },
+        { "w": "SECONDS", "atFrame": 248, "emphasis": true }
+      ]
+    },
+    {
+      "text": "Rated 4.8 by real users",
+      "startFrame": 338,
+      "endFrame": 386,
+      "words": [
+        { "w": "Rated", "atFrame": 338 },
+        { "w": "4.8", "atFrame": 346, "emphasis": true },
+        { "w": "by", "atFrame": 356 },
+        { "w": "real", "atFrame": 362 },
+        { "w": "users", "atFrame": 368 }
+      ]
+    }
+  ],
+  "audio": {
+    "enabled": true,
+    "mode": "sfx-only",
+    "tracks": [
+      {
+        "id": "hook-light-switch",
+        "kind": "sfx",
+        "category": "product",
+        "event": "lamp switch clicks on during first product flash",
+        "sync": {
+          "sceneId": "hook",
+          "anchor": "scene-start",
+          "offsetFrames": 3
+        },
+        "preset": "sfx-light-switch",
+        "startFrame": 3,
+        "startSecond": 0.1,
+        "durationFrames": 5,
+        "volume": 0.7,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "hook-camera-shutter",
+        "kind": "sfx",
+        "category": "product",
+        "event": "product hero freezes into a crisp visual frame",
+        "sync": {
+          "sceneId": "hook",
+          "anchor": "visual-lock",
+          "offsetFrames": 9
+        },
+        "preset": "sfx-camera-shutter",
+        "startFrame": 9,
+        "startSecond": 0.3,
+        "durationFrames": 6,
+        "volume": 0.5,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "hook-riser",
+        "kind": "sfx",
+        "category": "transition",
+        "event": "headline rises into hook payoff",
+        "sync": {
+          "sceneId": "hook",
+          "anchor": "headline-enter",
+          "offsetFrames": 17
+        },
+        "preset": "sfx-riser",
+        "startFrame": 17,
+        "startSecond": 0.567,
+        "durationFrames": 22,
+        "volume": 0.42,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "hook-sub-boom",
+        "kind": "sfx",
+        "category": "impact",
+        "event": "hero visual locks into place",
+        "sync": {
+          "sceneId": "hook",
+          "anchor": "visual-lock",
+          "offsetFrames": 47
+        },
+        "preset": "sfx-sub-boom",
+        "startFrame": 47,
+        "startSecond": 1.567,
+        "durationFrames": 15,
+        "volume": 0.66,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "pain-whoosh",
+        "kind": "sfx",
+        "category": "transition",
+        "event": "problem scene wipes in",
+        "sync": {
+          "sceneId": "pain",
+          "anchor": "scene-cut",
+          "offsetFrames": 3
+        },
+        "preset": "sfx-whoosh",
+        "startFrame": 63,
+        "startSecond": 2.1,
+        "durationFrames": 14,
+        "volume": 0.46,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "pain-pack-open",
+        "kind": "sfx",
+        "category": "product",
+        "event": "before-state object opens into the problem close-up",
+        "sync": {
+          "sceneId": "pain",
+          "anchor": "visual-lock",
+          "offsetFrames": 60
+        },
+        "preset": "sfx-pack-open",
+        "startFrame": 120,
+        "startSecond": 4,
+        "durationFrames": 13,
+        "volume": 0.5,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "before-snap",
+        "kind": "sfx",
+        "category": "product",
+        "event": "before state snaps to comparison",
+        "sync": {
+          "sceneId": "pain",
+          "anchor": "visual-lock",
+          "offsetFrames": 84
+        },
+        "preset": "sfx-tactile-snap",
+        "startFrame": 144,
+        "startSecond": 4.8,
+        "durationFrames": 5,
+        "volume": 0.58,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "demo-pop",
+        "kind": "sfx",
+        "category": "ui",
+        "event": "feature demo card pops forward",
+        "sync": {
+          "sceneId": "demo",
+          "anchor": "scene-start",
+          "offsetFrames": 3
+        },
+        "preset": "sfx-pop",
+        "startFrame": 183,
+        "startSecond": 6.1,
+        "durationFrames": 6,
+        "volume": 0.62,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "demo-swipe",
+        "kind": "sfx",
+        "category": "transition",
+        "event": "product visual swipes through benefit",
+        "sync": {
+          "sceneId": "demo",
+          "anchor": "visual-lock",
+          "offsetFrames": 44
+        },
+        "preset": "sfx-swipe",
+        "startFrame": 224,
+        "startSecond": 7.467,
+        "durationFrames": 9,
+        "volume": 0.44,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "demo-reveal-hit",
+        "kind": "sfx",
+        "category": "impact",
+        "event": "benefit reveal hits at the end of the demo move",
+        "sync": {
+          "sceneId": "demo",
+          "anchor": "visual-lock",
+          "offsetFrames": 90
+        },
+        "preset": "sfx-reveal-hit",
+        "startFrame": 270,
+        "startSecond": 9,
+        "durationFrames": 11,
+        "volume": 0.56,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "metric-count-tick",
+        "kind": "sfx",
+        "category": "metric",
+        "event": "proof metric counts upward",
+        "sync": {
+          "sceneId": "proof",
+          "anchor": "metric-count",
+          "offsetFrames": 2
+        },
+        "preset": "sfx-count-tick",
+        "startFrame": 332,
+        "startSecond": 11.067,
+        "durationFrames": 4,
+        "volume": 0.42,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "metric-sparkle",
+        "kind": "sfx",
+        "category": "metric",
+        "event": "proof label glints after the number settles",
+        "sync": {
+          "sceneId": "proof",
+          "anchor": "metric-count",
+          "offsetFrames": 35
+        },
+        "preset": "sfx-sparkle",
+        "startFrame": 365,
+        "startSecond": 12.167,
+        "durationFrames": 18,
+        "volume": 0.42,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "cta-bass-drop",
+        "kind": "sfx",
+        "category": "impact",
+        "event": "CTA panel lands",
+        "sync": {
+          "sceneId": "cta",
+          "anchor": "cta-land",
+          "offsetFrames": 12
+        },
+        "preset": "sfx-bass-drop",
+        "startFrame": 402,
+        "startSecond": 13.4,
+        "durationFrames": 23,
+        "volume": 0.54,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "cta-stinger",
+        "kind": "sfx",
+        "category": "notification",
+        "event": "CTA button glow pulses",
+        "sync": {
+          "sceneId": "cta",
+          "anchor": "cta-land",
+          "offsetFrames": 16
+        },
+        "preset": "sfx-stinger",
+        "startFrame": 406,
+        "startSecond": 13.533,
+        "durationFrames": 17,
+        "volume": 0.56,
+        "rightsStatus": "generated"
+      },
+      {
+        "id": "cta-success",
+        "kind": "sfx",
+        "category": "reward",
+        "event": "final CTA confirmation pulse",
+        "sync": {
+          "sceneId": "cta",
+          "anchor": "reward",
+          "offsetFrames": 33
+        },
+        "preset": "sfx-success",
+        "startFrame": 423,
+        "startSecond": 14.1,
+        "durationFrames": 18,
+        "volume": 0.5,
+        "rightsStatus": "generated"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "block": "cold-open-payoff",
+      "startSecond": 0,
+      "durationSecond": 2,
+      "transitionOut": "whip-left",
+      "impact": {
+        "atFrame": 47,
+        "strength": "heavy"
+      },
+      "eyebrow": "New setup",
+      "headline": "Desk lighting that works harder",
+      "body": "Show the product in the first frame.",
+      "visual": "Product hero"
+    },
+    {
+      "id": "pain",
+      "block": "split-before-after",
+      "startSecond": 2,
+      "durationSecond": 4,
+      "transitionOut": "zoom-punch",
+      "impact": {
+        "atFrame": 84,
+        "strength": "light"
+      },
+      "eyebrow": "Problem",
+      "headline": "Stop fighting screen glare",
+      "body": "Turn the customer pain into one clear visual.",
+      "visual": "Before"
+    },
+    {
+      "id": "demo",
+      "block": "device-frame",
+      "startSecond": 6,
+      "durationSecond": 5,
+      "transitionOut": "whip-up",
+      "impact": {
+        "atFrame": 90,
+        "strength": "light"
+      },
+      "eyebrow": "Demo",
+      "headline": "Angle, dim, and focus in seconds",
+      "body": "Use product screenshots, clips, or approved generated visuals.",
+      "visual": "Feature demo"
+    },
+    {
+      "id": "proof",
+      "block": "stat-slam",
+      "startSecond": 11,
+      "durationSecond": 2,
+      "transitionOut": "luma-wipe",
+      "colorMode": "inverted",
+      "eyebrow": "Why it wins",
+      "headline": "Built for long work sessions",
+      "body": "Only render proof the user supplied or the source confirmed.",
+      "proof": "User-supplied claim required",
+      "metric": {
+        "label": "Replace with approved rating, discount, or savings",
+        "from": 0,
+        "to": 4.8,
+        "suffix": "/5",
+        "decimals": 1
+      },
+      "visual": "Proof"
+    },
+    {
+      "id": "cta",
+      "block": "cta-card",
+      "startSecond": 13,
+      "durationSecond": 2,
+      "eyebrow": "Today",
+      "headline": "Upgrade your desk",
+      "body": "Close with one direct action.",
+      "visual": "CTA"
+    }
+  ]
+}

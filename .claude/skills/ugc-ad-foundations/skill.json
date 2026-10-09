@@ -1,0 +1,80 @@
+{
+  "id": "ugc-ad-foundations",
+  "title": "UGC ad foundations",
+  "description": "The shared ground under every UGC-style social ad: the codes that read as an ad versus a person, hook / body / CTA anatomy with frame budgets per length, the one safe-zone and caption-position spec for 9:16, 4:5 and 1:1, the shared UGC numbers (change interval, VO budget, bed level, loudness), the four looks, hook variants, and the claims rules every format inherits. Load it with exactly one UGC format owner (screen demo, green screen, unboxing, problem-solution). Not a format on its own.",
+  "summary": "Shared ground for UGC ads: ad codes, hook/body/CTA in frames, one safe-zone spec, shared levels, looks, variants and claims.",
+  "kind": "reference",
+  "category": "UGC ads",
+  "tags": [
+    "ugc",
+    "foundations",
+    "safe-zones",
+    "platform-specs",
+    "claims",
+    "social-ads"
+  ],
+  "aspects": [
+    "9:16",
+    "1:1",
+    "4:5"
+  ],
+  "duration": {
+    "minSeconds": 6,
+    "maxSeconds": 60
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-hooks"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-scripting"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-craft"
+    },
+    {
+      "kind": "skill",
+      "id": "ad-qa"
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "The hook frame and the safe zones are judged on captured frames."
+    }
+  ],
+  "models": [],
+  "triggers": [
+    "what makes a TikTok ad not look like an ad",
+    "where can text go on a Reels or TikTok video",
+    "how long should a social ad be",
+    "UGC ad structure: hook, body, call to action",
+    "make our ads feel creator-made instead of polished",
+    "which claims can a UGC ad make"
+  ],
+  "templates": [],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.0",
+  "icon": "📐"
+}

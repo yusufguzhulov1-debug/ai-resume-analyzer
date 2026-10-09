@@ -1,0 +1,24 @@
+interface:
+  display_name: "JTX Video Skill"
+  short_description: "把录好的中文口播视频制作成 AI 金融黑金商务风抖音成片"
+  default_prompt: "用 $jtxvideo-skill 处理这个口播视频，按预处理、SRT、结构分析、分镜、设计、HyperFrames 渲染和 2K60 导出的流程走。"
+compatibility:
+  canonical_format: "agent-skills"
+  adapter_targets:
+    - "openai"
+    - "claude"
+    - "generic"
+  activation:
+    mode: "manual"
+    paths: []
+  execution:
+    context: "inline"
+    shell: "bash"
+  trust:
+    source_tier: "local"
+    remote_inline_execution: "forbid"
+    remote_metadata_policy: "allow-metadata-only"
+  degradation:
+    openai: "metadata-adapter"
+    claude: "neutral-source-plus-adapter"
+    generic: "neutral-source"

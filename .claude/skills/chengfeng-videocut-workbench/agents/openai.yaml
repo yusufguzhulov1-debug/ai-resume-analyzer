@@ -1,0 +1,6 @@
+interface:
+  display_name: "工作台操作"
+  short_description: "用 Runtime CLI 定位工程、覆盖画面、删除词句并调整已有片段"
+  default_prompt: "使用 $chengfeng-videocut:chengfeng-videocut-workbench 操作当前剪辑工程，先区分画面层与口播片段，再通过现有 Runtime CLI 执行并回读核验。"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,182 @@
+{
+  "id": "ugc-screen-demo",
+  "title": "UGC screen demo",
+  "description": "The faceless screen-recording ad for software: an app or website doing one satisfying thing, result first, a cursor that acts, narrated flatly and cut tight for a vertical feed. Covers the one-thing rule, direction defaults, beat sheets with frame budgets at 15, 30 and 45 seconds, hook options, full-bleed versus device frame and how far to magnify the UI, cursor choreography in frames, focus pushes on the moment of value, UI reading times, the sound plan, and how to build it on Three.js from a recording or a rebuilt UI.",
+  "summary": "Faceless app ad: one satisfying action, result first, a cursor that acts, focus pushes on the payoff, beat sheets at 15/30/45 s.",
+  "kind": "style",
+  "category": "UGC ads",
+  "tags": [
+    "ugc",
+    "screen-demo",
+    "saas",
+    "faceless",
+    "product-demo",
+    "screen-recording"
+  ],
+  "aspects": [
+    "9:16",
+    "4:5",
+    "1:1"
+  ],
+  "duration": {
+    "minSeconds": 8,
+    "maxSeconds": 45
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-craft"
+    },
+    {
+      "kind": "skill",
+      "id": "ad-qa"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-ad-foundations"
+    },
+    {
+      "kind": "skill",
+      "id": "screen-capture"
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Trim, crop and reframe a desktop recording into the vertical canvas before it hits the timeline."
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "Bring the user's own screen recording into assets/."
+    },
+    {
+      "kind": "capability",
+      "id": "voiceover",
+      "why": "The flat, unproduced narration this format runs on."
+    },
+    {
+      "kind": "capability",
+      "id": "sfx",
+      "why": "A click per interaction and a confirmation tone on completion."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "Every readability and click-feedback check is a frame capture."
+    },
+    {
+      "kind": "skill",
+      "id": "three-look",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-transitions",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "device-mockup",
+      "engines": [
+        "three"
+      ]
+    }
+  ],
+  "route": {
+    "deliverable": "An 8–45 second vertical ad of an app doing one thing, from a screen recording or a rebuilt UI",
+    "inputs": [
+      "screen-recording",
+      "brief"
+    ],
+    "priority": 45,
+    "askFirst": [
+      "What is the app's one-sentence payoff?",
+      "Do you have a screen recording of the moment it pays off?"
+    ]
+  },
+  "models": [
+    {
+      "purpose": "voice",
+      "model": "ElevenLabs v3",
+      "via": "voiceover",
+      "note": "A conversational voice, not a narrator; flat read."
+    },
+    {
+      "purpose": "sfx",
+      "model": "ElevenLabs SFX",
+      "via": "sfx",
+      "note": "UI clicks, typing ticks, soft lands and one success tone."
+    },
+    {
+      "purpose": "music",
+      "model": "ElevenLabs Music",
+      "via": "music",
+      "note": "Minimal instrumental bed at 100 or 120 BPM, sits at 0.12 under VO."
+    },
+    {
+      "purpose": "image",
+      "model": "Gemini 2.5 Flash Image",
+      "via": "generate-image",
+      "note": "Only for placeholder content inside a rebuilt UI."
+    }
+  ],
+  "triggers": [
+    "turn my screen recording into a TikTok ad",
+    "vertical demo ad for my SaaS",
+    "show my app actually working in 15 seconds",
+    "faceless ad for a web app with a voiceover",
+    "make a Reels ad from this screencast",
+    "app demo ad with a cursor, no face"
+  ],
+  "templates": [
+    "prequel-launch",
+    "notion-launch-video"
+  ],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.1.2",
+  "icon": "🖥️"
+}

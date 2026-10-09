@@ -1,0 +1,130 @@
+{
+  "id": "stock-and-broll",
+  "title": "Stock and b-roll",
+  "description": "Sourcing cut-aways, product shots and staged stills that read as real rather than stock: the sourcing order from the user's own material through the brand's assets and stock connectors to generated, the licence and resolution checks before anything is used, the tells of stock and the four treatments that fix them (grade, crop, move, cut short) with ffmpeg and in-scene recipes, prompting image and video models for phone-grade material, and where a cut-away goes against the voice. Load it when an ad needs material nobody has shot.",
+  "summary": "Cut-aways that read as real: sourcing order, licence and resolution checks, grade-crop-move-cut, phone-grade prompts, placement on the word.",
+  "kind": "technique",
+  "category": "Craft",
+  "tags": [
+    "b-roll",
+    "stock",
+    "footage",
+    "prompting",
+    "grading",
+    "licensing"
+  ],
+  "aspects": [
+    "9:16",
+    "4:5",
+    "1:1",
+    "16:9"
+  ],
+  "duration": {
+    "minSeconds": 1,
+    "maxSeconds": 4
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "ugc-craft"
+    },
+    {
+      "kind": "skill",
+      "id": "screen-capture"
+    },
+    {
+      "kind": "mcp",
+      "id": "freepik",
+      "why": "Stock stills and short clips for environments and textures."
+    },
+    {
+      "kind": "mcp",
+      "id": "fal",
+      "why": "Video generation for the staged shots stock never has."
+    },
+    {
+      "kind": "mcp",
+      "id": "replicate",
+      "why": "A second route to video and music generation."
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "The user's own material, and real brand imagery, into assets/."
+    },
+    {
+      "kind": "capability",
+      "id": "generate-image",
+      "why": "Staged stills nobody has photographed."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "Whether a shot reads as real is a judgement made by looking."
+    },
+    {
+      "kind": "capability",
+      "id": "web-research",
+      "why": "The brand's own photography and logo, and checking a stock licence."
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Grade, trim and re-encode clips before a scene plays them."
+    }
+  ],
+  "models": [
+    {
+      "purpose": "video",
+      "model": "Veo 3.1",
+      "via": "mcp:fal",
+      "note": "Prompt against its cinematic instinct: handheld, available light, imperfect framing."
+    },
+    {
+      "purpose": "video",
+      "model": "Kling v3",
+      "via": "mcp:replicate",
+      "note": "Alternate route when fal is not connected."
+    },
+    {
+      "purpose": "image",
+      "model": "Gemini 2.5 Flash Image",
+      "via": "generate-image",
+      "note": "Phone photo, available light, a cluttered real room."
+    }
+  ],
+  "triggers": [
+    "find me some b-roll for this ad",
+    "this footage looks like stock",
+    "generate a shot of someone struggling with this",
+    "what should I cut away to during the voiceover",
+    "make the generated footage look like a phone shot",
+    "can I use this stock clip in an ad",
+    "I need a product shot nobody has taken"
+  ],
+  "templates": [],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.0",
+  "icon": "🎞️"
+}

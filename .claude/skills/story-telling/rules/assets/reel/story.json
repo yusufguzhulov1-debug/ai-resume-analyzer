@@ -1,0 +1,59 @@
+{
+  "_template": "Vertical short, 3 scenes, about 30s, 1080x1920 for Reels, Shorts and TikTok. Subtitles group 4 words, stat card sits top centre. Keep everything meaningful above the bottom 260px where platform UI sits.",
+  "slug": "replace-me",
+  "compositionId": "ReplaceMe",
+  "orientation": "vertical",
+  "fps": 30,
+  "title": {
+    "eyebrow": "IN THIRTY SECONDS",
+    "headline": "The claim, in five words",
+    "subline": "Why it matters to you"
+  },
+  "voice": {
+    "speaker": "shubh",
+    "pace": 1.08,
+    "temperature": 0.65,
+    "languageCode": "en-IN"
+  },
+  "style": {
+    "artPrompt": "flat vector cartoon illustration, bold clean black outlines, high contrast saturated colours, strong central subject framed for a tall vertical crop, expressive faces, warm Indian skin tones, simple graphic shapes, no text, no lettering, no numbers, no watermark",
+    "accent": "#7FD1FF",
+    "background": "#04060A",
+    "displayFont": "BricolageGrotesque",
+    "textFont": "Poppins"
+  },
+  "references": {},
+  "scenes": [
+    {
+      "id": 0,
+      "narration": "HOOK in the first three seconds. State the claim flat, no throat clearing. Twenty four to thirty words, spoken, not written.",
+      "stat": { "value": "6.50%", "label": "THE NUMBER, FEB 2026" },
+      "images": [
+        { "id": 1, "prompt": "The single strongest image of the whole story, one subject dead centre, plenty of headroom for the title card, dramatic light." }
+      ]
+    },
+    {
+      "id": 1,
+      "narration": "THE EVIDENCE. One piece of proof, one number, spelled as words. Do not add a second idea here, there is no room in thirty seconds.",
+      "stat": null,
+      "images": [
+        { "id": 2, "prompt": "A tall composition that shows the mechanism or the consequence, subject in the upper two thirds of the frame." }
+      ]
+    },
+    {
+      "id": 2,
+      "narration": "THE TURN. What the viewer should now think or do, then a reason to follow. Land it in under thirty words.",
+      "stat": null,
+      "images": [
+        { "id": 3, "prompt": "A resolution image, brighter palette than the previous frames, subject centred, clean background for the outro card." }
+      ]
+    }
+  ],
+  "outro": {
+    "headline": "Three word payoff",
+    "subline": "FOLLOW FOR MORE",
+    "imageId": 3,
+    "durationInFrames": 75
+  },
+  "music": null
+}

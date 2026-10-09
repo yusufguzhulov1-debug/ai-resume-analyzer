@@ -1,0 +1,799 @@
+<!doctype html>
+<!-- SOURCE FILE. Edit src.html.tmpl, then run build.py to write index.html (the file HyperFrames opens).
+     Per-app text, colours and screens live ONLY in CONFIG below. Timing lives ONLY in the double-brace beat tokens (see build.py). -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width={{WIDTH}}, height={{HEIGHT}}" />
+    <title>App promo reel</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      // ====================== CONFIG: every per-app value ======================
+      // Every claim here must come from the app's site, store listing or its own strings.
+      const CONFIG = /*CONFIG*/ {
+        "lang": "en",
+        "font": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+        "colors": {
+          "bg": "#1F4FD1",
+          "bgDeep": "#0E2A7A",
+          "surface": "#F4F6FB",
+          "ink": "#0B1020",
+          "accent": "#FFD23F",
+          "accentInk": "#1A1400",
+          "drop": "#E8453C",
+          "card": "#FFFFFF",
+          "cardInk": "#0B1020",
+          "chipBg": "#E6ECFF",
+          "chipInk": "#1F3FA8"
+        },
+        "hook": ["YOUR", "HOOK", "IN FOUR", "WORDS?"],
+        "heroCard": { "title": "A real item from the app", "sub": "Where it lives", "chip": "Its real status" },
+        "screens": [
+          {
+            "caption": "Step one, in the app's words",
+            "title": "Screen title",
+            "rows": [
+              { "title": "First row", "sub": "Detail", "chip": "Label" },
+              { "title": "Second row", "sub": "Detail", "chip": "Label" },
+              { "title": "Third row", "sub": "Detail", "chip": "Label" }
+            ],
+            "button": "Primary action"
+          },
+          {
+            "caption": "Step two",
+            "title": "Second screen",
+            "rows": [
+              { "title": "Result one", "sub": "Detail", "chip": "Label" },
+              { "title": "Result two", "sub": "Detail", "chip": "Label" },
+              { "title": "Result three", "sub": "Detail", "chip": "Label" }
+            ],
+            "button": "Next action"
+          }
+        ],
+        "feature": { "title": "THE BIG\nFEATURE", "lines": ["A real fact", "Another real fact", "A third one"] },
+        "benefits": { "items": ["Benefit one", "Benefit two", "Benefit three"], "line": "One short line." },
+        "value": { "a": "ONE", "b": "WORD.", "sub": "A true closing claim" },
+        "end": {
+          "name": "App Name",
+          "iconText": "A",
+          "icon": "",
+          "tagline": "Tagline from the\nstore listing.",
+          "cta": "Download",
+          "url": "example.com"
+        },
+        "stores": {{STORES}},
+        "aiLabel": "AI-generated"
+      } /*END CONFIG*/;
+    </script>
+    <style>
+      @font-face {
+        font-family: "Reel";
+        src: local("Inter"), local("Inter Variable");
+        font-weight: 100 900;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: {{WIDTH}}px;
+        height: {{HEIGHT}}px;
+        overflow: hidden;
+        background: var(--bg-deep);
+      }
+      #root {
+        /* the tap point on the phone's button, in frame coordinates (the 4:5 layer maps it) */
+        --tap-x: 540px;
+        --tap-y: 1374px;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Reel", var(--font);
+        color: #ffffff;
+      }
+      [data-cfg] {
+        white-space: pre-line;
+      }
+
+      /* ---------- background: radial only (linear full-screen gradients band) ---------- */
+      .bgl {
+        position: absolute;
+        inset: 0;
+      }
+      #bg-main {
+        background: radial-gradient(ellipse 95% 70% at 50% 42%, var(--bg) 0%, var(--bg) 45%, var(--bg-deep) 100%);
+      }
+      #bg-light {
+        background: radial-gradient(ellipse 95% 70% at 50% 45%, #ffffff 0%, var(--surface) 60%, var(--surface) 100%);
+        opacity: 0;
+      }
+      #bg-drop {
+        background: radial-gradient(ellipse 95% 70% at 50% 42%, var(--drop) 0%, var(--drop) 40%, var(--bg-deep) 110%);
+        opacity: 0;
+      }
+      #bg-glow {
+        position: absolute;
+        left: 90px;
+        top: 460px;
+        width: 900px;
+        height: 900px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 65% at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.35) 100%);
+      }
+      #flash {
+        position: absolute;
+        inset: 0;
+        z-index: 80;
+        background: radial-gradient(circle at 50% 50%, #ffffff 0%, #ffffff 40%, var(--accent) 100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* ---------- shared ---------- */
+      .scene {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        perspective: 1800px;
+      }
+      .cam {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .center-col {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .kin {
+        display: block;
+        font-weight: 900;
+        font-size: 150px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+        margin: 6px 0;
+        text-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      }
+      .kin.hl {
+        color: var(--accent);
+      }
+      .card {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        padding: 26px 30px;
+        border-radius: 34px;
+        background: var(--card);
+        color: var(--card-ink);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+      }
+      .card .tile {
+        flex: none;
+        width: 92px;
+        height: 92px;
+        border-radius: 24px;
+        background: var(--chip-bg);
+      }
+      .card h6 {
+        font-size: 38px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .card .sub {
+        font-size: 32px;
+        opacity: 0.7;
+        margin-top: 4px;
+      }
+      .chip {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-size: 32px;
+        font-weight: 700;
+        background: var(--chip-bg);
+        color: var(--chip-ink);
+      }
+      .tapdot {
+        position: absolute;
+        width: 86px;
+        height: 86px;
+        margin: -43px 0 0 -43px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.85);
+        border: 4px solid rgba(0, 0, 0, 0.25);
+        z-index: 30;
+        opacity: 0;
+      }
+      .tapring {
+        position: absolute;
+        width: 86px;
+        height: 86px;
+        margin: -43px 0 0 -43px;
+        border-radius: 50%;
+        border: 6px solid var(--accent);
+        z-index: 29;
+        opacity: 0;
+      }
+
+      /* ---------- S1 hook ---------- */
+      /* the feed safe box (references/storyboard.md): 9:16 x 64-960, y 270-1500; the AI label sits at
+         its bottom-left corner, y 1430-1492, so nothing to read goes below y 1430. The hero card rests
+         turned -3deg: a corner drops up to half its width x sin 3deg (22.5 px), so its edge is at y 1390 */
+      #hook-words {
+        padding-bottom: 290px;
+      }
+      #hero {
+        position: absolute;
+        left: 90px;
+        right: 130px;
+        bottom: 530px;
+      }
+
+      /* ---------- S2 phone ---------- */
+      #caption {
+        position: absolute;
+        top: 280px;
+        left: 64px;
+        right: 120px;
+        height: 160px;
+      }
+      .cap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 64px;
+        font-weight: 900;
+        line-height: 1.08;
+        color: var(--ink);
+        opacity: 0;
+      }
+      /* holds #phone only: no box in 9:16; the 4:5 layer scales it (caption and tap points stay
+         outside, in frame coordinates) */
+      .phone-fit {
+        display: contents;
+      }
+      #phone {
+        position: absolute;
+        left: 150px;
+        top: 440px;
+        width: 780px;
+        height: 1160px;
+        border-radius: 96px;
+        background: #0c0c0e;
+        padding: 22px;
+        box-shadow: 0 50px 120px rgba(0, 0, 0, 0.35);
+      }
+      #screen {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 76px;
+        overflow: hidden;
+        background: var(--surface);
+      }
+      .scr {
+        position: absolute;
+        inset: 0;
+        padding: 70px 36px 40px;
+        color: var(--ink);
+      }
+      .scr h5 {
+        font-size: 50px;
+        font-weight: 900;
+        margin-bottom: 24px;
+      }
+      /* phone UI text: 38 px or more, so the 4:5 phone (scale 0.79) still shows it at 30 px */
+      .scr .card {
+        margin-bottom: 14px;
+        padding: 18px 30px;
+      }
+      .scr .card .sub {
+        font-size: 38px;
+      }
+      .scr .chip {
+        margin-top: 8px;
+        padding: 6px 16px;
+        font-size: 38px;
+      }
+      .scr .btn {
+        position: absolute;
+        left: 36px;
+        right: 36px;
+        bottom: 156px;
+        height: 96px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        font-weight: 800;
+        background: var(--bg);
+        color: #ffffff;
+      }
+      #scr-b {
+        transform: translateX(430px);
+        opacity: 0;
+      }
+
+      /* ---------- S3 drop ---------- */
+      #feat-title {
+        font-size: 138px;
+        font-weight: 900;
+        line-height: 0.98;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+        text-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        margin-bottom: 60px;
+      }
+      .feat-line {
+        font-size: 56px;
+        font-weight: 800;
+        margin: 14px 0;
+        padding: 14px 34px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.28);
+      }
+
+      /* ---------- S4 benefits ---------- */
+      .ben {
+        font-size: 60px;
+        font-weight: 900;
+        margin: 18px 0;
+        padding: 24px 44px;
+        border-radius: 34px;
+        background: var(--card);
+        color: var(--card-ink);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+      }
+      #ben-line {
+        margin-top: 60px;
+        font-size: 64px;
+        font-weight: 900;
+        color: var(--accent);
+      }
+
+      /* ---------- S5 value ---------- */
+      #val-a,
+      #val-b {
+        font-size: 210px;
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+      }
+      #val-b {
+        color: var(--accent);
+      }
+      #val-sub {
+        margin-top: 50px;
+        font-size: 60px;
+        font-weight: 800;
+      }
+
+      /* ---------- S6 end card ---------- */
+      #s6 .center-col {
+        padding-bottom: 150px;
+      }
+      #icon {
+        width: 300px;
+        height: 300px;
+        border-radius: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        color: #ffffff;
+        font-size: 170px;
+        font-weight: 900;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+      }
+      #icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #wordmark {
+        margin-top: 60px;
+        font-size: 104px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      #tagline {
+        margin-top: 24px;
+        font-size: 52px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--ink);
+        opacity: 0.85;
+      }
+      #cta {
+        margin-top: 70px;
+        font-size: 44px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      #stores {
+        margin-top: 26px;
+        display: flex;
+        gap: 26px;
+        justify-content: center;
+      }
+      .store {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 20px 34px;
+        border-radius: 22px;
+        background: #0b0b0d;
+        color: #ffffff;
+        font-size: 38px;
+        font-weight: 700;
+      }
+      .store svg {
+        width: 44px;
+        height: 44px;
+        fill: #ffffff;
+      }
+      #url {
+        margin-top: 40px;
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--ink);
+        opacity: 0.8;
+      }
+
+      /* ---------- 4:5 feed (1080x1350): only the numbers that depend on the frame height ---------- */
+      #root[data-format="4:5"] {
+        --tap-y: 984px; /* 246 + (1374 - 440) x 0.79: the 9:16 tap point through the phone's transform */
+      }
+      #root[data-format="4:5"] #bg-glow {
+        top: 225px;
+      }
+      #root[data-format="4:5"] #hook-words {
+        padding-bottom: 330px;
+      }
+      /* the 4:5 safe box: x 64-1016, y 96-1254; the AI label sits at y 1186.5-1246 (the turned hero card's
+         lowest corner: 1150 + 23.6) */
+      #root[data-format="4:5"] #hero {
+        right: 90px;
+        bottom: 200px;
+      }
+      #root[data-format="4:5"] #s6 .center-col {
+        padding-bottom: 0;
+      }
+      #root[data-format="4:5"] #caption {
+        top: 96px;
+        right: 64px;
+        height: 140px;
+      }
+      /* the phone at 0.79, its top edge at y 246 and its bottom at y 1162, above the AI label. The
+         transform breaks the perspective of .scene, so the wrapper carries it: the 9:16 projection */
+      #root[data-format="4:5"] .phone-fit {
+        display: block;
+        position: absolute;
+        inset: 0;
+        transform: translateY(-194px) scale(0.79);
+        transform-origin: 540px 440px;
+        perspective: 1800px;
+        perspective-origin: 540px 960px;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute">
+      <defs>
+        <symbol id="ic-play" viewBox="0 0 24 24"><path d="M3.6 2.2 13.4 12l-9.8 9.8c-.4-.2-.6-.6-.6-1.1V3.3c0-.5.2-.9.6-1.1zm11 11 2.5 2.5-11 6.3zm0-2.4L6.1 2.3l11 6.3zm3.6 2.1-2.4-1.4-.1.1v-.1l.1.1 2.4-1.4 3 1.7c.8.5.8 1.2 0 1.7z" /></symbol>
+        <symbol id="ic-apple" viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.8-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.6-1-2.6-4.1zM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z" /></symbol>
+      </defs>
+    </svg>
+
+    <div id="root" data-composition-id="main" data-start="0" data-width="{{WIDTH}}" data-height="{{HEIGHT}}" data-format="{{FORMAT}}" data-duration="{{DURATION}}">
+      <div id="bg">
+        <div id="bg-main" class="bgl"></div>
+        <div id="bg-light" class="bgl"></div>
+        <div id="bg-drop" class="bgl"></div>
+        <div id="bg-glow"></div>
+        <div id="vignette"></div>
+      </div>
+
+      <!-- S1 hook: bars 0-1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="{{calc D(2)+0.15}}" data-track-index="1">
+        <div id="s1-cam" class="cam">
+          <div id="hook-words" class="center-col">
+            <div class="kin" id="w-0" data-cfg="hook.0"></div>
+            <div class="kin hl" id="w-1" data-cfg="hook.1"></div>
+            <div class="kin" id="w-2" data-cfg="hook.2"></div>
+            <div class="kin hl" id="w-3" data-cfg="hook.3"></div>
+          </div>
+          <div id="hero">
+            <div class="card">
+              <div class="tile"></div>
+              <div>
+                <h6 data-cfg="heroCard.title"></h6>
+                <div class="sub" data-cfg="heroCard.sub"></div>
+                <div class="chip" id="hero-chip" data-cfg="heroCard.chip"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S2 the app: bars 2-5, screen A then screen B -->
+      <section id="s2" class="clip scene" data-start="{{calc D(2)-0.3}}" data-duration="{{calc D(6)+0.1-(D(2)-0.3)}}" data-track-index="2">
+        <div id="s2-cam" class="cam">
+          <div id="caption">
+            <div class="cap" id="cap-a" data-cfg="screens.0.caption"></div>
+            <div class="cap" id="cap-b" data-cfg="screens.1.caption"></div>
+          </div>
+          <div class="phone-fit">
+            <div id="phone">
+              <div id="screen">
+                <div class="scr" id="scr-a">
+                  <h5 data-cfg="screens.0.title"></h5>
+                  <div class="card" id="a-row-0"><div class="tile"></div><div><h6 data-cfg="screens.0.rows.0.title"></h6><div class="sub" data-cfg="screens.0.rows.0.sub"></div><div class="chip" data-cfg="screens.0.rows.0.chip"></div></div></div>
+                  <div class="card" id="a-row-1"><div class="tile"></div><div><h6 data-cfg="screens.0.rows.1.title"></h6><div class="sub" data-cfg="screens.0.rows.1.sub"></div><div class="chip" data-cfg="screens.0.rows.1.chip"></div></div></div>
+                  <div class="card" id="a-row-2"><div class="tile"></div><div><h6 data-cfg="screens.0.rows.2.title"></h6><div class="sub" data-cfg="screens.0.rows.2.sub"></div><div class="chip" data-cfg="screens.0.rows.2.chip"></div></div></div>
+                  <div class="btn" id="a-btn" data-cfg="screens.0.button"></div>
+                </div>
+                <div class="scr" id="scr-b">
+                  <h5 data-cfg="screens.1.title"></h5>
+                  <div class="card" id="b-row-0"><div class="tile"></div><div><h6 data-cfg="screens.1.rows.0.title"></h6><div class="sub" data-cfg="screens.1.rows.0.sub"></div><div class="chip" data-cfg="screens.1.rows.0.chip"></div></div></div>
+                  <div class="card" id="b-row-1"><div class="tile"></div><div><h6 data-cfg="screens.1.rows.1.title"></h6><div class="sub" data-cfg="screens.1.rows.1.sub"></div><div class="chip" data-cfg="screens.1.rows.1.chip"></div></div></div>
+                  <div class="card" id="b-row-2"><div class="tile"></div><div><h6 data-cfg="screens.1.rows.2.title"></h6><div class="sub" data-cfg="screens.1.rows.2.sub"></div><div class="chip" data-cfg="screens.1.rows.2.chip"></div></div></div>
+                  <div class="btn" id="b-btn" data-cfg="screens.1.button"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tapdot" id="tap-a" style="left: var(--tap-x); top: var(--tap-y)"></div>
+          <div class="tapring" id="ring-a" style="left: var(--tap-x); top: var(--tap-y)"></div>
+          <div class="tapdot" id="tap-b" style="left: var(--tap-x); top: var(--tap-y)"></div>
+          <div class="tapring" id="ring-b" style="left: var(--tap-x); top: var(--tap-y)"></div>
+        </div>
+      </section>
+
+      <!-- S3 the drop: bars 6-7 -->
+      <section id="s3" class="clip scene" data-start="{{calc D(6)-0.1}}" data-duration="{{calc D(8)+0.15-(D(6)-0.1)}}" data-track-index="3">
+        <div id="s3-cam" class="cam">
+          <div class="center-col">
+            <div id="feat-title" data-cfg="feature.title"></div>
+            <div class="feat-line" id="fl-0" data-cfg="feature.lines.0"></div>
+            <div class="feat-line" id="fl-1" data-cfg="feature.lines.1"></div>
+            <div class="feat-line" id="fl-2" data-cfg="feature.lines.2"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S4 benefits: bars 8-9 -->
+      <section id="s4" class="clip scene" data-start="{{calc D(8)-0.3}}" data-duration="{{calc D(10)+0.15-(D(8)-0.3)}}" data-track-index="4">
+        <div id="s4-cam" class="cam">
+          <div class="center-col">
+            <div class="ben" id="ben-0" data-cfg="benefits.items.0"></div>
+            <div class="ben" id="ben-1" data-cfg="benefits.items.1"></div>
+            <div class="ben" id="ben-2" data-cfg="benefits.items.2"></div>
+            <div id="ben-line" data-cfg="benefits.line"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S5 value word: bars 10-11 -->
+      <section id="s5" class="clip scene" data-start="{{calc D(10)-0.3}}" data-duration="{{calc D(12)+0.15-(D(10)-0.3)}}" data-track-index="5">
+        <div id="s5-cam" class="cam">
+          <div class="center-col" id="val-block">
+            <div id="val-a" data-cfg="value.a"></div>
+            <div id="val-b" data-cfg="value.b"></div>
+            <div id="val-sub" data-cfg="value.sub"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S6 end card: bar 12 to the end -->
+      <!-- the last end-card lines (badges, URL) enter on D(13, 3): 0.3 s to settle + 0.8 s to read {{BEFORE_END 1.1 D(13, 3)}} -->
+      <section id="s6" class="clip scene" data-start="{{calc D(12)-0.3}}" data-duration="{{calc DURATION-(D(12)-0.3)}}" data-track-index="6">
+        <div id="s6-cam" class="cam">
+          <div class="center-col">
+            <div id="icon" data-cfg="end.iconText"></div>
+            <div id="wordmark" data-cfg="end.name"></div>
+            <div id="tagline" data-cfg="end.tagline"></div>
+            <div id="cta" data-cfg="end.cta"></div>
+            <div id="stores">
+              <div class="store" id="st-app_store"><svg><use href="#ic-apple" /></svg>App Store</div>
+              <div class="store" id="st-google_play"><svg><use href="#ic-play" /></svg>Google Play</div>
+            </div>
+            <div id="url" data-cfg="end.url"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="flash"></div>
+      <!-- the AI-generated label (CONFIG.aiLabel) is added by build.py's script at the end of the page -->
+
+      <audio id="bgm" src="assets/audio/bgm.wav" data-start="0" data-duration="{{DURATION}}" data-track-index="20" data-volume="1"></audio>
+      <!--SFX-->
+    </div>
+
+    <script>
+      // ---------- CONFIG -> DOM (runs before the timeline is built) ----------
+      const cfgGet = (path) => {
+        const v = path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), CONFIG);
+        if (v === undefined) throw new Error(`CONFIG has no value for "${path}"`);
+        return v;
+      };
+      // an empty string hides the element (e.g. a screen with no bottom button, a row with no chip)
+      document.querySelectorAll("[data-cfg]").forEach((el) => {
+        const v = String(cfgGet(el.dataset.cfg));
+        el.textContent = v;
+        if (v === "") el.style.display = "none";
+      });
+      const css = document.documentElement.style;
+      const C = CONFIG.colors;
+      css.setProperty("--font", CONFIG.font);
+      [["--bg", C.bg], ["--bg-deep", C.bgDeep], ["--surface", C.surface], ["--ink", C.ink], ["--accent", C.accent],
+       ["--accent-ink", C.accentInk], ["--drop", C.drop], ["--card", C.card], ["--card-ink", C.cardInk],
+       ["--chip-bg", C.chipBg], ["--chip-ink", C.chipInk]].forEach(([k, v]) => css.setProperty(k, v));
+      document.documentElement.lang = CONFIG.lang;
+      if (CONFIG.end.icon) {
+        const icon = document.getElementById("icon");
+        icon.textContent = "";
+        icon.style.display = ""; // iconText is "" when an image is used; show the tile again
+        const img = document.createElement("img");
+        img.src = CONFIG.end.icon;
+        img.alt = "";
+        icon.appendChild(img);
+      }
+      ["app_store", "google_play"].forEach((s) => {
+        if (!CONFIG.stores.includes(s)) document.getElementById(`st-${s}`).remove();
+      });
+      const STORE_SEL = CONFIG.stores.map((s) => `#st-${s}`);
+
+      // ---------- beat grid (from beats.json via build.py) ----------
+      const BEATS = {{BEATS}};
+      const FIRST = {{DOWNBEAT_INDEX}};
+      const BPB = {{BEATS_PER_BAR}};
+      const DURATION = {{DURATION}};
+      const D = (bar, beat = 0) => {
+        if (beat < 0 || beat >= BPB) throw new Error(`D(${bar}, ${beat}): beat must be 0-${BPB - 1}`);
+        const t = BEATS[FIRST + bar * BPB + beat];
+        if (t === undefined) throw new Error(`D(${bar}, ${beat}) is outside the beat grid`);
+        return t;
+      };
+      const E = (bar, beat = 0) => {
+        if (beat < 0 || beat >= BPB) throw new Error(`E(${bar}, ${beat}): beat must be 0-${BPB - 1}`);
+        const next = BEATS[FIRST + bar * BPB + beat + 1];
+        if (next === undefined) throw new Error(`E(${bar}, ${beat}) is outside the beat grid`);
+        return (D(bar, beat) + next) / 2;
+      };
+
+      // ---------- motion language (motion.js: one spring per object type) ----------
+      {{MOTION}}
+
+      // ---------- helpers (HyperFrames 0.8.78 gotchas built in) ----------
+      // Every fromTo whose from-state is visible uses immediateRender:false, or it shows at t=0.
+      const tl = gsap.timeline({ paused: true });
+      // amp is in 9:16 pixels; FRAME_SCALE keeps the shake the same share of a shorter frame
+      const FRAME_SCALE = {{FRAME_SCALE}};
+      const shake = (sel, t, amp = 18) => {
+        const a = amp * FRAME_SCALE;
+        return tl.fromTo(sel, { x: 0, y: 0 }, { keyframes: { x: [0, -a, a * 0.8, -a * 0.5, a * 0.3, 0], y: [0, a * 0.6, -a * 0.5, a * 0.3, -a * 0.1, 0] }, duration: 0.3, ease: "none", immediateRender: false }, t);
+      };
+      const punch = (sel, t, s = 1.06) => tl.fromTo(sel, { scale: s }, { scale: 1, duration: 0.45, ease: "power3.out", immediateRender: false }, t);
+      const flash = (t, peak = 0.6, dur = 0.35) =>
+        tl.fromTo("#flash", { opacity: peak }, { opacity: 0, duration: dur, ease: "power2.out", immediateRender: false }, t);
+      const slam = (sel, t, from = 2.4) =>
+        tl.fromTo(sel, { scale: from, opacity: 0, filter: "blur(14px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, t - 0.08);
+      const pop = (sel, t, rot = 0) => tl.fromTo(sel, { scale: 0, opacity: 0, rotation: rot }, { scale: 1, opacity: 1, rotation: 0, duration: 0.32, ease: MOTION.icon.ease }, t - 0.1);
+      const tap = (dot, ring, t) => {
+        tl.fromTo(dot, { x: -90, y: 110, opacity: 0, scale: 1 }, { x: 0, y: 0, opacity: 1, duration: 0.35, ease: "power2.inOut" }, t - 0.4);
+        tl.to(dot, { scale: 0.7, duration: 0.07, ease: "power1.in" }, t - 0.05);
+        tl.to(dot, { scale: 1.1, opacity: 0, duration: 0.25, ease: "power1.out" }, t + 0.03);
+        tl.fromTo(ring, { scale: 0.6, opacity: 1 }, { scale: 2.8, opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, t);
+      };
+      const bgTo = (layer, v, t, d = 0.25) => tl.to(layer, { opacity: v, duration: d, ease: "power2.inOut" }, t);
+
+      for (let b = 0; FIRST + b * BPB < BEATS.length && D(b) < DURATION; b++)
+        tl.fromTo("#bg-glow", { scale: 1.2, opacity: 1 }, { scale: 1, opacity: 0.5, duration: 1.2, ease: "power2.out", immediateRender: false }, D(b));
+
+      // ===== S1 hook: the FULL hook (#hook-words) is static and opaque from frame 0 (average watch time can be ~1 s; the first frame is also the cover). No word build, no fade-in; only the hero chip below slides in. =====
+      tl.fromTo("#hero", { y: 700, rotation: 8, opacity: 0 }, { y: 0, rotation: -3, opacity: 1, duration: 0.55, ease: MOTION.panel.ease }, Math.max(0.05, D(0) - 0.6));
+      punch("#hook-words", D(0, 0), 1.05);
+      punch("#hook-words", D(1, 0), 1.04);
+      punch("#hero-chip", D(0, 3), 1.3);
+      punch("#hero-chip", D(1, 3), 1.4);
+      // beat 2 of each hook bar: no still second while the hook is read (storyboard.md, "Density")
+      punch("#hook-words", D(0, 2), 1.03);
+      punch("#hook-words", D(1, 2), 1.03);
+      tl.to("#hero", { y: 900, duration: 0.3, ease: "power3.in" }, D(2) - 0.3);
+      tl.to("#hook-words", { y: -1200, filter: "blur(18px)", duration: 0.3, ease: "power3.in" }, D(2) - 0.3);
+
+      // ===== S2 the app (light background) =====
+      bgTo("#bg-light", 1, D(2) - 0.25);
+      tl.fromTo("#phone", { y: 1600, rotationX: 50, rotationZ: -8, scale: 0.8, filter: "blur(10px)" }, { y: 0, rotationX: 0, rotationZ: 0, scale: 1, filter: "blur(0px)", duration: 0.7, ease: MOTION.panel.ease }, D(2) - 0.28);
+      tl.fromTo("#cap-a", { y: -220, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: MOTION.headline.ease }, D(2) - 0.1);
+      [0, 1, 2].forEach((i) => pop(`#a-row-${i}`, D(2, i + 1)));
+      punch("#a-row-1", D(3, 0), 1.05);
+      punch("#a-row-2", D(3, 2), 1.05);
+      punch("#cap-a", D(3, 1), 1.04);
+      tap("#tap-a", "#ring-a", D(3, 3));
+      tl.fromTo("#a-btn", { scale: 1 }, { keyframes: { scale: [1, 0.94, 1.04, 1] }, duration: 0.3, ease: "none", immediateRender: false }, D(3, 3) - 0.03);
+      // bar 4: slide A -> B (a slide, not a crossfade: no double exposure); hide A after it leaves
+      tl.to("#scr-a", { x: -430, duration: 0.3, ease: "power3.inOut" }, D(4) - 0.28);
+      tl.fromTo("#scr-b", { x: 430, opacity: 1 }, { x: 0, opacity: 1, duration: 0.3, ease: "power3.inOut", immediateRender: false }, D(4) - 0.28);
+      tl.to("#scr-a", { opacity: 0, duration: 0.02, ease: "none" }, D(4) + 0.03);
+      tl.to("#cap-a", { y: -220, opacity: 0, duration: 0.2, ease: "power2.in" }, D(4) - 0.22);
+      tl.fromTo("#cap-b", { y: -220, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: MOTION.headline.ease }, D(4) - 0.02);
+      [0, 1, 2].forEach((i) => pop(`#b-row-${i}`, D(4, i + 1)));
+      punch("#b-row-0", D(5, 0), 1.05);
+      punch("#b-row-1", D(5, 1), 1.05);
+      punch("#b-row-2", D(5, 2), 1.05);
+      tap("#tap-b", "#ring-b", D(5, 3));
+      tl.fromTo("#b-btn", { scale: 1 }, { keyframes: { scale: [1, 0.94, 1.04, 1] }, duration: 0.3, ease: "none", immediateRender: false }, D(5, 3) - 0.03);
+      tl.to("#s2-cam", { y: -1900, duration: 0.3, ease: "power3.in" }, D(6) - 0.3);
+
+      // ===== S3 the drop (bar 6) =====
+      bgTo("#bg-light", 0, D(6) - 0.1, 0.1);
+      bgTo("#bg-drop", 1, D(6) - 0.1, 0.1);
+      slam("#feat-title", D(6, 0), 3.2);
+      shake("#s3-cam", D(6, 0), 30);
+      flash(D(6, 0), 0.55, 0.4);
+      pop("#fl-0", D(6, 2), -3);
+      punch("#feat-title", D(6, 3), 1.04);
+      pop("#fl-1", D(7, 0), 3);
+      pop("#fl-2", D(7, 2), -2);
+      punch("#feat-title", D(7, 0), 1.05);
+      tl.to("#s3-cam", { scale: 0.85, opacity: 0, duration: 0.25, ease: "power3.in" }, D(8) - 0.25);
+
+      // ===== S4 benefits =====
+      bgTo("#bg-drop", 0, D(8) - 0.2, 0.2);
+      [D(8, 0), D(8, 2), D(9, 0)].forEach((t, i) => {
+        tl.fromTo(`#ben-${i}`, { x: i % 2 ? 900 : -900, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "expo.out" }, t - 0.1);
+      });
+      slam("#ben-line", D(9, 2), 2);
+      tl.to("#s4-cam", { x: -1100, duration: 0.3, ease: "power3.in" }, D(10) - 0.3);
+
+      // ===== S5 value word =====
+      slam("#val-a", D(10, 0), 3.2);
+      slam("#val-b", D(10, 2), 3.6);
+      punch("#val-a", D(10, 3), 1.04);
+      tl.fromTo("#val-sub", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: MOTION.headline.ease }, D(11, 0) - 0.1);
+      punch("#val-block", D(11, 2), 1.04);
+      tl.to("#s5-cam", { rotationY: 90, opacity: 0, duration: 0.28, ease: "power3.in" }, D(12) - 0.28);
+
+      // ===== S6 end card (light) =====
+      bgTo("#bg-light", 1, D(12) - 0.1, 0.1);
+      tl.fromTo("#icon", { scale: 3.2, rotation: -20, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.3, ease: "power4.in" }, D(12) - 0.3);
+      shake("#s6-cam", D(12), 30);
+      flash(D(12), 0.5, 0.4);
+      tl.fromTo("#wordmark", { clipPath: "inset(0 100% 0 0)", x: -40 }, { clipPath: "inset(0 0% 0 0)", x: 0, duration: 0.4, ease: "power3.out" }, D(12, 2) - 0.1);
+      punch("#wordmark", D(13, 1), 1.05);
+      tl.fromTo("#tagline", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: MOTION.headline.ease }, D(13, 0) - 0.1);
+      tl.fromTo("#cta", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.3, ease: MOTION.icon.ease }, D(13, 2) - 0.08);
+      STORE_SEL.forEach((s, i) =>
+        tl.fromTo(s, { x: i ? 500 : -500, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "expo.out" }, D(13, 3) - 0.1));
+      tl.fromTo("#url", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, D(13, 3));
+      punch("#icon", D(14, 0), 1.06);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

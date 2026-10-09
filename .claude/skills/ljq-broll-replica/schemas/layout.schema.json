@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ljq.local/schemas/layout.schema.json",
+  "title": "LJQ B-roll settled layout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "canvas", "elements"],
+  "properties": {
+    "schemaVersion": {"enum": ["1.1", "1.2"]},
+    "caseId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "canvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "fps", "durationInFrames", "backgroundColor"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "fps": {"type": "number", "exclusiveMinimum": 0},
+        "durationInFrames": {"type": "integer", "minimum": 1},
+        "backgroundColor": {"type": "string", "minLength": 1}
+      }
+    },
+    "settledFrame": {"$ref": "#/$defs/settledFrame"},
+    "scenes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scene"}},
+    "replacementTests": {"type": "array", "items": {"$ref": "#/$defs/replacementTest"}},
+    "elements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/element"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schemaVersion": {"const": "1.1"}}},
+      "then": {"type": "object", "required": ["settledFrame"]}
+    },
+    {
+      "if": {"properties": {"schemaVersion": {"const": "1.2"}}},
+      "then": {"type": "object", "required": ["scenes", "replacementTests"]}
+    }
+  ],
+  "$defs": {
+    "confidence": {"enum": ["high", "medium", "low"]},
+    "evidenceType": {"enum": ["measured", "observed", "inferred", "default"]},
+    "settledFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frame", "timeSeconds", "evidenceType", "evidence", "confidence"],
+      "properties": {
+        "frame": {"type": "integer", "minimum": 0},
+        "timeSeconds": {"type": "number", "minimum": 0},
+        "evidenceType": {"$ref": "#/$defs/evidenceType"},
+        "evidence": {"type": "string", "minLength": 1},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "startFrame", "endFrame", "settledFrame", "sourceStill", "renderStill", "comparisonStill", "status", "observation"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "startFrame": {"type": "integer", "minimum": 0},
+        "endFrame": {"type": "integer", "minimum": 0},
+        "settledFrame": {"$ref": "#/$defs/settledFrame"},
+        "sourceStill": {"type": "string", "minLength": 1},
+        "renderStill": {"type": "string", "minLength": 1},
+        "comparisonStill": {"type": "string", "minLength": 1},
+        "status": {"enum": ["passed", "needs_review"]},
+        "observation": {"type": "string", "minLength": 1}
+      }
+    },
+    "fontCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "source", "license", "evidence", "confidence", "exact"],
+      "properties": {
+        "family": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "license": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string", "minLength": 1},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "exact": {"type": "boolean"}
+      }
+    },
+    "replacementTest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elementId", "variant", "renderStill", "status", "observation"],
+      "properties": {
+        "elementId": {"type": "string", "minLength": 1},
+        "variant": {"type": "string", "minLength": 1},
+        "renderStill": {"type": "string", "minLength": 1},
+        "status": {"enum": ["passed", "needs_review", "failed"]},
+        "observation": {"type": "string", "minLength": 1}
+      }
+    },
+    "bounds": {
+      "description": "Percent of canvas: [left, top, width, height]. Values may extend outside the canvas.",
+      "type": "array",
+      "prefixItems": [
+        {"type": "number"},
+        {"type": "number"},
+        {"type": "number", "exclusiveMinimum": 0},
+        {"type": "number", "exclusiveMinimum": 0}
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "anchor": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number", "minimum": 0, "maximum": 1},
+        {"type": "number", "minimum": 0, "maximum": 1}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "detail"],
+      "properties": {
+        "type": {"$ref": "#/$defs/evidenceType"},
+        "detail": {"type": "string", "minLength": 1},
+        "frame": {"type": "integer", "minimum": 0}
+      }
+    },
+    "appearance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backgroundColor": {"type": "string"},
+        "backgroundImage": {"type": "string"},
+        "color": {"type": "string"},
+        "fill": {"type": "string"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "mixBlendMode": {"type": "string", "minLength": 1},
+        "filter": {"type": "string"},
+        "blurPx": {"type": "number", "minimum": 0},
+        "brightness": {"type": "number", "minimum": 0},
+        "contrast": {"type": "number", "minimum": 0},
+        "saturation": {"type": "number", "minimum": 0},
+        "hueRotateDeg": {"type": "number"},
+        "boxShadow": {"type": "string"},
+        "textShadow": {"type": "string"},
+        "textGradient": {"type": "string"},
+        "textStrokePx": {"type": "number", "minimum": 0},
+        "textStrokeColor": {"type": "string"},
+        "borderRadiusPx": {"type": "number", "minimum": 0},
+        "borderWidthPx": {"type": "number", "minimum": 0},
+        "borderColor": {"type": "string"},
+        "borderStyle": {"type": "string"},
+        "fontFamily": {"type": "string"},
+        "fontSizePx": {"type": "number", "exclusiveMinimum": 0},
+        "fontWeight": {"type": ["number", "string"]},
+        "lineHeight": {"type": ["number", "string"]},
+        "letterSpacingPx": {"type": "number"},
+        "textAlign": {"enum": ["left", "center", "right", "justify"]},
+        "verticalAlign": {"enum": ["top", "center", "bottom"]},
+        "whiteSpace": {"type": "string"},
+        "overflow": {"type": "string"},
+        "objectFit": {"enum": ["contain", "cover", "fill", "none", "scale-down"]},
+        "objectPosition": {"type": "string"},
+        "clipPath": {"type": "string"},
+        "maskImage": {"type": "string"},
+        "transformOrigin": {"type": "string"},
+        "paddingPx": {"type": "number", "minimum": 0},
+        "isolation": {"type": "string"}
+      }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "name",
+        "content",
+        "asset",
+        "assetSource",
+        "completeness",
+        "bounds",
+        "anchor",
+        "cropMode",
+        "zIndex",
+        "parentId",
+        "appearance",
+        "replaceable",
+        "evidence",
+        "confidence"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "type": {"enum": ["background", "group", "text", "image", "video", "shape", "line", "effect"]},
+        "name": {"type": "string", "minLength": 1},
+        "sceneId": {"type": ["string", "null"]},
+        "content": {"type": ["string", "null"]},
+        "asset": {"type": ["string", "null"]},
+        "assetSource": {"type": ["string", "null"], "enum": ["original", "found", "extracted", "recreated", null]},
+        "completeness": {"type": ["string", "null"], "enum": ["complete", "visible-only", "unknown", null]},
+        "bounds": {"$ref": "#/$defs/bounds"},
+        "anchor": {"$ref": "#/$defs/anchor"},
+        "cropMode": {"enum": ["viewport-clip", "container-mask", "asset-crop", "none"]},
+        "zIndex": {"type": "integer"},
+        "parentId": {"type": ["string", "null"]},
+        "shape": {"type": ["string", "null"], "enum": ["rectangle", "circle", "ellipse", "line", "custom", null]},
+        "appearance": {"$ref": "#/$defs/appearance"},
+        "replaceable": {"type": "boolean"},
+        "fontCandidates": {"type": "array", "items": {"$ref": "#/$defs/fontCandidate"}},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+        "confidence": {"$ref": "#/$defs/confidence"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"enum": ["image", "video"]}}},
+          "then": {
+            "properties": {
+              "asset": {"type": "string", "minLength": 1},
+              "assetSource": {"enum": ["original", "found", "extracted", "recreated"]},
+              "completeness": {"enum": ["complete", "visible-only", "unknown"]}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "text"}}},
+          "then": {"properties": {"content": {"type": "string"}}}
+        }
+      ]
+    }
+  }
+}

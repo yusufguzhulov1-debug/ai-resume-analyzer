@@ -1,0 +1,92 @@
+/* Breakout-card components. Tokens come from breakout.TOKENS as CSS variables; fonts from assets/fonts (Montserrat, OFL). */
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat-Medium.ttf);font-weight:500}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat-SemiBold.ttf);font-weight:600}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat-Bold.ttf);font-weight:700}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat-ExtraBold.ttf);font-weight:800}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat-Black.ttf);font-weight:900}
+html,body{margin:0;background:var(--paper)}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--paper);font-family:Mont,Helvetica Neue,sans-serif;-webkit-font-smoothing:antialiased}
+.bg{position:absolute;inset:0;background:var(--paper)}
+.pane{position:absolute;inset:0;overflow:hidden}
+.pane video{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover}
+#camPane{transform-origin:50% 45%}
+.scene{position:absolute;inset:0;opacity:0}
+.row{position:absolute;left:0;width:1080px;display:flex;justify-content:center;align-items:center}
+
+/* dark material: every pill, card and tile */
+.dk{background:var(--dark);color:#fff;box-shadow:0 34px 60px -24px rgba(12,12,18,.55),0 2px 6px rgba(12,12,18,.18),inset 0 0 0 1.5px rgba(255,255,255,.07)}
+.pill{display:inline-flex;align-items:center;gap:18px;height:96px;padding:0 44px;border-radius:999px;font:700 38px Mont;position:relative;opacity:0;white-space:nowrap}
+.pill.big{height:118px;padding:0 54px;gap:22px}
+.pill.big b{font:800 62px Mont;letter-spacing:-1px;min-width:270px}
+.pill .mut{font:600 38px Mont;color:var(--mute)}
+.pill.chip{height:82px;padding:0 30px;font-size:34px;gap:14px}
+.pill.file{height:86px;padding:0 34px;font-size:36px}
+.ok,.no{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;opacity:0;margin-left:4px;flex:none}
+.no{background:var(--red)}
+.no.small{width:38px;height:38px;margin-left:auto}
+.strike{position:absolute;left:40px;right:110px;top:46px;height:5px;border-radius:3px;background:var(--red);transform-origin:0 50%;transform:scaleX(0)}
+.ico{display:flex}
+.tag{margin-left:auto;font:700 24px Mont;color:#fff;background:var(--accent);border-radius:999px;padding:10px 20px;letter-spacing:.3px}
+.chip .tag{margin-left:8px;font-size:21px;padding:8px 16px}
+
+/* tilted screenshot */
+.persp{perspective:1700px}
+.shot{position:relative;border-radius:30px;overflow:hidden;opacity:0;transform-style:preserve-3d;box-shadow:0 60px 90px -30px rgba(12,12,18,.5),0 0 0 1.5px rgba(255,255,255,.08)}
+.shot img{display:block;width:100%}
+.hl{position:absolute;border-radius:8px;background:rgba(91,158,255,.32);transform-origin:0 50%;transform:scaleX(0);mix-blend-mode:screen}
+
+/* headline: small line + huge + mega, grey gradient ink */
+.hline{font:700 52px Mont;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0;letter-spacing:-.5px}
+.huge,.mega{font-weight:800;letter-spacing:-2px;line-height:1;opacity:0;background:linear-gradient(180deg,var(--ink) 0%,var(--ink) 45%,#7c7c86 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;padding:0 10px}
+.huge{font-size:112px}
+.mega{font-size:150px;font-weight:900;letter-spacing:-4px}
+
+/* icon tile with a label and a badge */
+.tile{width:230px;height:230px;border-radius:52px;display:flex;align-items:center;justify-content:center;position:relative;opacity:0}
+.badge{position:absolute;right:-16px;top:-16px;width:62px;height:62px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px -6px rgba(30,64,175,.6);opacity:0}
+.lbl{font:700 40px Mont;color:var(--ink);opacity:0}
+
+/* big camera title */
+.title{font:900 150px Mont;color:#fff;letter-spacing:-4px;text-shadow:0 10px 40px rgba(10,6,30,.55),0 2px 6px rgba(10,6,30,.4);opacity:0}
+
+/* cards */
+.card{position:relative;border-radius:36px;padding:40px 46px 34px;box-sizing:border-box;opacity:0}
+.ctitle{display:flex;align-items:center;font:700 50px Mont;letter-spacing:-.5px;margin-bottom:22px}
+.spark{margin-left:auto;display:flex}
+.item{display:flex;align-items:center;gap:24px;height:82px;font:600 37px Mont;opacity:0}
+.item span{color:#9a9aa6}
+.tick{width:44px;height:44px;border-radius:50%;border:3px solid #5d5d68;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:none}
+.tick svg{opacity:0}
+.sect{margin-top:20px}
+.cap2{display:flex;align-items:center;font:700 25px Mont;letter-spacing:2.2px;color:#8b8b96;margin-bottom:10px}
+.val{font:600 33px Mont;color:#fff;min-height:44px}
+.kv{display:flex;align-items:center;height:52px;font:600 32px Mont;color:#fff;gap:16px}
+.kv code{margin-left:auto;font:600 27px Mont;color:var(--accent2)}
+
+/* file tree */
+.tree{padding:0}
+.thead{position:absolute;left:34px;right:30px;top:26px;height:48px;display:flex;align-items:center;gap:14px;font:700 36px Mont}
+.meter{margin-left:auto;display:flex;align-items:center;gap:10px;font:600 26px Mont;color:#c9c9d1;position:relative;opacity:.4}
+.mbar{width:150px;height:14px;border-radius:7px;background:#34343a;overflow:hidden}
+.mbar i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#f97316,var(--red));transform-origin:0 50%;transform:scaleX(0)}
+.meter em{position:absolute;right:0;top:40px;font:500 18px Mont;font-style:normal;color:#77777f;letter-spacing:.5px}
+.trow{position:absolute;left:22px;right:22px;height:46px;border-radius:12px;display:flex;align-items:center;gap:16px;padding-left:18px;font:500 31px Mont;color:#c9c9d1}
+.trow.sub{padding-left:66px}
+.path{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+
+/* comment card */
+.comment{display:flex;align-items:center;gap:26px;width:820px;padding:30px 36px;border-radius:30px}
+.av{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));flex:none}
+.cbody{flex:1}
+.sk{display:block;height:18px;border-radius:9px;background:#3a3a42;margin-bottom:16px}
+.ctext{display:flex;align-items:center;height:56px;font:800 50px Mont;letter-spacing:1px}
+.caret{display:inline-block;width:4px;height:48px;background:var(--accent2);margin-left:6px}
+.heart{display:flex}
+.cursor{position:absolute;left:0;top:0;opacity:0;z-index:5}
+
+/* captions: one or two words, lowercase as spoken */
+.cap{position:absolute;left:0;width:1080px;text-align:center;font:700 60px Mont;letter-spacing:-.6px;opacity:0;white-space:nowrap;z-index:8}
+.cap.pg{top:var(--capPage);color:var(--ink);text-shadow:0 6px 18px rgba(0,0,0,.13)}
+.cap.cm{top:var(--capCam);color:#fff;text-shadow:0 4px 22px rgba(10,6,30,.55),0 1px 3px rgba(10,6,30,.45)}

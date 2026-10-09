@@ -1,0 +1,101 @@
+{
+  "_template": "News or event, 5 scenes, about 45s, landscape. Every claim carries its date in the spoken line, never the word today: a news video outlives the day it was made.",
+  "slug": "replace-me",
+  "compositionId": "ReplaceMe",
+  "orientation": "landscape",
+  "fps": 30,
+  "title": {
+    "eyebrow": "WHAT HAPPENED",
+    "headline": "The event, in one line",
+    "subline": "And what it changes"
+  },
+  "voice": {
+    "speaker": "shubh",
+    "pace": 1.05,
+    "temperature": 0.6,
+    "languageCode": "en-IN"
+  },
+  "style": {
+    "artPrompt": "editorial photo-illustration style, semi realistic, muted documentary palette, strong directional light, shallow depth of field, restrained and factual mood, no text, no lettering, no numbers, no logos, no watermark",
+    "accent": "#FF8A5B",
+    "background": "#04060A",
+    "displayFont": "BricolageGrotesque",
+    "textFont": "Inter"
+  },
+  "references": {},
+  "scenes": [
+    {
+      "id": 0,
+      "narration": "WHAT HAPPENED. The event and its date, stated flat. No adjectives, no speculation, no word today.",
+      "stat": null,
+      "images": [
+        {
+          "id": 1,
+          "prompt": "A wide shot of the place where the event happened, documentary framing, overcast light."
+        },
+        {
+          "id": 2,
+          "prompt": "A closer detail of the same place that carries the consequence."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "narration": "THE NUMBER. The one figure that makes this matter, spelled as words, with the source named.",
+      "stat": {
+        "value": "Rs 12,400 cr",
+        "label": "AS REPORTED, 14 FEB 2026"
+      },
+      "images": [
+        {
+          "id": 3,
+          "prompt": "An image that represents the scale of the number without being a chart, physical and tangible."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "narration": "BACKGROUND. The minimum context needed to understand the event. One or two sentences only.",
+      "stat": null,
+      "images": [
+        {
+          "id": 4,
+          "prompt": "An archival feeling image of the earlier period, muted palette, softer light."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "narration": "WHO IS AFFECTED. Name the group and how it reaches them, concretely.",
+      "stat": null,
+      "images": [
+        {
+          "id": 5,
+          "prompt": "Ordinary people in the situation described, documentary framing, natural light."
+        },
+        {
+          "id": 6,
+          "prompt": "A detail shot of the practical effect on their day."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "narration": "WHAT NEXT. The next milestone and its date. If the outcome is uncertain, say so plainly.",
+      "stat": null,
+      "images": [
+        {
+          "id": 7,
+          "prompt": "A forward looking image, a road, a doorway or a calendar-free horizon, dawn light."
+        }
+      ]
+    }
+  ],
+  "outro": {
+    "headline": "What to watch next",
+    "subline": "REPORTED 14 FEBRUARY 2026",
+    "imageId": 7,
+    "durationInFrames": 80
+  },
+  "music": null
+}

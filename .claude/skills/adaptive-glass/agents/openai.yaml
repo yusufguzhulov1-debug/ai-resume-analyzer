@@ -1,0 +1,6 @@
+interface:
+  display_name: "Style: Adaptive Glass"
+  short_description: "Speaker plus moving proof in footage-matched glass panels"
+  default_prompt: "Use $adaptive-glass with $edit-video to edit this talking-head explainer with real proof in glass panels."
+policy:
+  allow_implicit_invocation: true

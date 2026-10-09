@@ -1,0 +1,120 @@
+{
+  "_template": "Numbered list, 6 scenes, about 60s, landscape. Scene 0 sets the promise, scenes 1 to 5 carry one item each with the item number on the stat card. Keep item scenes the same length so the list feels ordered.",
+  "slug": "replace-me",
+  "compositionId": "ReplaceMe",
+  "orientation": "landscape",
+  "fps": 30,
+  "title": {
+    "eyebrow": "FIVE THINGS",
+    "headline": "Five things about the topic",
+    "subline": "Number four changes the maths"
+  },
+  "voice": {
+    "speaker": "shubh",
+    "pace": 1.05,
+    "temperature": 0.6,
+    "languageCode": "en-IN"
+  },
+  "style": {
+    "artPrompt": "clean isometric vector illustration, bold outlines, limited palette of deep navy, warm amber and off white, simple geometric shapes, soft long shadows, editorial infographic mood without any labels, no text, no lettering, no numbers, no watermark",
+    "accent": "#8AE28A",
+    "background": "#04060A",
+    "displayFont": "BricolageGrotesque",
+    "textFont": "Inter"
+  },
+  "references": {},
+  "scenes": [
+    {
+      "id": 0,
+      "narration": "THE PROMISE. Name the list and why these five, in one breath. Do not tease without delivering: the first item starts in the next scene.",
+      "stat": null,
+      "images": [
+        {
+          "id": 1,
+          "prompt": "A wide establishing image of the subject area, strong central composition, warm light."
+        },
+        {
+          "id": 2,
+          "prompt": "A tight detail from the same world, shallow depth of field."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "narration": "ITEM ONE. State the item, then the one fact that proves it. Twenty four to thirty two words, no digits in the spoken line.",
+      "stat": {
+        "value": "01",
+        "label": "THE FIRST ITEM"
+      },
+      "images": [
+        {
+          "id": 3,
+          "prompt": "A single object or scene that stands for item one, centred, clean background."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "narration": "ITEM TWO. Same shape as item one. Consistency is what makes a list readable.",
+      "stat": {
+        "value": "02",
+        "label": "THE SECOND ITEM"
+      },
+      "images": [
+        {
+          "id": 4,
+          "prompt": "A single object or scene for item two, same palette and framing as the previous item."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "narration": "ITEM THREE. Keep the rhythm. If an item needs two facts, it is really two items.",
+      "stat": {
+        "value": "03",
+        "label": "THE THIRD ITEM"
+      },
+      "images": [
+        {
+          "id": 5,
+          "prompt": "A single object or scene for item three, same palette and framing."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "narration": "ITEM FOUR. This is where the strongest item goes: far enough in to have earned attention, early enough to be seen.",
+      "stat": {
+        "value": "04",
+        "label": "THE FOURTH ITEM"
+      },
+      "images": [
+        {
+          "id": 6,
+          "prompt": "A single object or scene for item four, slightly more dramatic light than the others."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "narration": "ITEM FIVE AND CLOSE. The last item, then one line that ties the five together.",
+      "stat": {
+        "value": "05",
+        "label": "THE FIFTH ITEM"
+      },
+      "images": [
+        {
+          "id": 7,
+          "prompt": "A single object or scene for item five, brighter resolution palette, clean background for the outro card."
+        }
+      ]
+    }
+  ],
+  "outro": {
+    "headline": "The through line",
+    "subline": "SOURCE AND DATE",
+    "imageId": 7,
+    "durationInFrames": 92
+  },
+  "music": null
+}

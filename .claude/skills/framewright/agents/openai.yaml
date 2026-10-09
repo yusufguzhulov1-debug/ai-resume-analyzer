@@ -1,0 +1,6 @@
+interface:
+  display_name: "Framewright"
+  short_description: "Procedural one-file videos: brief, concepts, storyboard, scenes, render, sound."
+  default_prompt: "Use $framewright to make a short video from my message. Start with the brief."
+policy:
+  allow_implicit_invocation: true

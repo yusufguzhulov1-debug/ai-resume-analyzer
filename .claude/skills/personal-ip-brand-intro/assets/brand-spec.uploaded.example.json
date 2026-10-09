@@ -1,0 +1,54 @@
+{
+  "brand": "YOUR BRAND",
+  "creator": "Creator Name or Role",
+  "category": "Specific creator category",
+  "services": [
+    "Primary offer",
+    "Content pillar",
+    "Community or product"
+  ],
+  "tagline": "One memorable point of view",
+  "style": "category-native-original-visual-thesis",
+  "palette": [
+    "#F4F1E8",
+    "#171717",
+    "#FF5A36",
+    "#2D5BFF"
+  ],
+  "rhythm": "hook / identity / proof / point-of-view / lockup",
+  "aspect": "16:9",
+  "duration": 7,
+  "engine": ["hyperframes"],
+  "language": "zh-Hant",
+  "visualMode": "image-assisted",
+  "media": {
+    "images": [
+      {
+        "role": "portrait",
+        "source": "/absolute/path/to/user-portrait.png",
+        "working": "assets/portrait.png",
+        "origin": "user-provided"
+      }
+    ]
+  },
+  "music": {
+    "mode": "uploaded",
+    "source": "/absolute/path/to/user-upload.mp3",
+    "working": "assets/bgm.mp3",
+    "userUploaded": true,
+    "segment": {
+      "start": 0,
+      "duration": 7
+    }
+  },
+  "timing": {
+    "mode": "uploaded-music",
+    "map": "audiomap.json"
+  },
+  "delivery": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "format": "mp4"
+  }
+}

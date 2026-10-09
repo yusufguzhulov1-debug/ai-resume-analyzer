@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "title": "FavStash Short-Form SFX Pack",
+  "generatedBy": "scripts/generate-sfx.mjs",
+  "guidance": "Choose a sound for a visible event and audition it against speech. Prefer curated sounds or the creator's established library; ordinary caption changes stay silent.",
+  "count": 11,
+  "sounds": [
+    {
+      "id": "clean-ding",
+      "title": "Clean Ding",
+      "file": "clean-ding.wav",
+      "durationSeconds": 0.55,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "success",
+        "reveal",
+        "bright"
+      ],
+      "recommendedUse": "A positive result or satisfying completion; use sparingly.",
+      "sha256": "26f2540b63529cc1dcedfc8037ad314a93dc7d24073c7026f7a6bf101e3d5834",
+      "license": "Apache-2.0",
+      "provenance": "Deterministically synthesized by scripts/generate-sfx.mjs; contains no third-party recording."
+    },
+    {
+      "id": "sub-impact",
+      "title": "Sub Impact",
+      "file": "sub-impact.wav",
+      "durationSeconds": 0.64,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "impact",
+        "reveal",
+        "low"
+      ],
+      "recommendedUse": "One important claim, number, or final reveal—not every cut.",
+      "sha256": "c910408bd9f2ca52ceff846cda65207ed218e928ccde1d494694de81c694b157",
+      "license": "Apache-2.0",
+      "provenance": "Deterministically synthesized by scripts/generate-sfx.mjs; contains no third-party recording."
+    },
+    {
+      "id": "typing-tick",
+      "title": "Typing Tick",
+      "file": "typing-tick.wav",
+      "durationSeconds": 0.055,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "typing",
+        "input",
+        "ui"
+      ],
+      "recommendedUse": "Occasional typed-character accents; never repeat on every letter for long copy.",
+      "sha256": "343a4fb37d25eded633c23cdd035c188b5be07c7313224a8ed33728b0ebfe3dc",
+      "license": "Apache-2.0",
+      "provenance": "Deterministically synthesized by scripts/generate-sfx.mjs; contains no third-party recording."
+    },
+    {
+      "id": "sparkle",
+      "title": "Sparkle",
+      "file": "sparkle.wav",
+      "durationSeconds": 0.72,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "delight",
+        "highlight",
+        "bright"
+      ],
+      "recommendedUse": "A delightful payoff or premium highlight; keep below the voice.",
+      "sha256": "ac0bed2ac2ff2fe4cf1c42ec5914d4e4d9e271fc8d4801c5f3f293fb06dbf846",
+      "license": "Apache-2.0",
+      "provenance": "Deterministically synthesized by scripts/generate-sfx.mjs; contains no third-party recording."
+    },
+    {
+      "id": "camera-shutter",
+      "title": "Camera Shutter",
+      "file": "curated/camera-shutter.wav",
+      "origin": "curated",
+      "durationSeconds": 0.31,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "camera",
+        "cut"
+      ],
+      "recommendedUse": "A substantial camera or layout change.",
+      "transientLeadFramesAt30fps": 4,
+      "suggestedGainDb": -11,
+      "sourceFileName": "Camera Shutter.wav",
+      "sourceTrimStartSeconds": 0.02,
+      "preparedTargetPeakDb": -9,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "d3a2b6d91af724fedc04b5c39d157873f644300b321c77ea8fb3a8294c275a02"
+    },
+    {
+      "id": "camera-shutter-light",
+      "title": "Light Shutter",
+      "file": "curated/camera-shutter-light.wav",
+      "origin": "curated",
+      "durationSeconds": 0.16,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "camera",
+        "cut",
+        "subtle"
+      ],
+      "recommendedUse": "A smaller framing or take change.",
+      "transientLeadFramesAt30fps": 2,
+      "suggestedGainDb": -12,
+      "sourceFileName": "sfx-camera-shutter-photo-click-0s.wav",
+      "sourceTrimStartSeconds": 0.125,
+      "preparedTargetPeakDb": -12,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "eb8e6782b8523bbe7268330a77acc2fec10091716fc2998c87bcde91e83da3b0"
+    },
+    {
+      "id": "ui-pop",
+      "title": "UI Pop",
+      "file": "curated/ui-pop.wav",
+      "origin": "curated",
+      "durationSeconds": 0.2,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "arrival",
+        "graphic"
+      ],
+      "recommendedUse": "An element visibly arrives; not every caption.",
+      "transientLeadFramesAt30fps": 0,
+      "suggestedGainDb": -12,
+      "sourceFileName": "sfx-ui-pop-short.mp3",
+      "sourceTrimStartSeconds": 0.03,
+      "preparedTargetPeakDb": -8,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "da8d4e9ab3b9e8bac5309243de329002948e57649fd25685f9c2f5d063eb6e76"
+    },
+    {
+      "id": "ui-click",
+      "title": "UI Click",
+      "file": "curated/ui-click.wav",
+      "origin": "curated",
+      "durationSeconds": 0.3,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "ui",
+        "selection"
+      ],
+      "recommendedUse": "A visible click, selection or editing action.",
+      "transientLeadFramesAt30fps": 0,
+      "suggestedGainDb": -13,
+      "sourceFileName": "sfx-ui-mouse-click-single-select-0s.mp3",
+      "sourceTrimStartSeconds": 0.02,
+      "preparedTargetPeakDb": -9,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "2f508c0b362d225d791b34e487bfd7d692ffcf9fd1ba53ade810fd4dd4313ef0"
+    },
+    {
+      "id": "zoom-swish",
+      "title": "Zoom Swish",
+      "file": "curated/zoom-swish.wav",
+      "origin": "curated",
+      "durationSeconds": 0.76,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "zoom",
+        "movement"
+      ],
+      "recommendedUse": "A motivated zoom; align its rise with travel.",
+      "transientLeadFramesAt30fps": 12,
+      "suggestedGainDb": -8,
+      "sourceFileName": "sfx-transition-swish-whoosh.mp3",
+      "sourceTrimStartSeconds": 0.02,
+      "preparedTargetPeakDb": -8,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "f6abc91c096c49bf6bc3db3a45319fe0bc806d99adea657799ddda553d814453"
+    },
+    {
+      "id": "hook-impact",
+      "title": "Hook Impact",
+      "file": "curated/hook-impact.wav",
+      "origin": "curated",
+      "durationSeconds": 1.9,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "hook",
+        "reveal"
+      ],
+      "recommendedUse": "The payoff of a reveal, below speech.",
+      "transientLeadFramesAt30fps": 2,
+      "suggestedGainDb": -6,
+      "sourceFileName": "sfx-hook-bass-impact.mp3",
+      "sourceTrimStartSeconds": 0.07,
+      "preparedTargetPeakDb": -9,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "999a79c38284aa8879a183908db381873ce16eed5015366f3e2273a88138c749"
+    },
+    {
+      "id": "metallic-riser",
+      "title": "Metallic Riser",
+      "file": "curated/metallic-riser.wav",
+      "origin": "curated",
+      "durationSeconds": 1.64,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "tags": [
+        "build",
+        "reveal"
+      ],
+      "recommendedUse": "Build anticipation and end at the reveal.",
+      "transientLeadFramesAt30fps": 0,
+      "suggestedGainDb": -6,
+      "sourceFileName": "Metallic Riser.wav",
+      "sourceTrimStartSeconds": 0,
+      "preparedTargetPeakDb": -10,
+      "provenance": "Maintainer-supplied recording; included at the maintainer's request.",
+      "sha256": "6b93fa944a692adf5322a99245a9cc2837377df83e1f87e98103d6e37209e597"
+    }
+  ]
+}

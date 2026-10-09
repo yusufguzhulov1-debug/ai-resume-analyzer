@@ -1,0 +1,147 @@
+{
+  "id": "app-store-preview",
+  "title": "App Store preview",
+  "description": "App Store and Google Play preview videos: up to three 15 to 30 second cuts per locale, each standalone (what it is, the best feature, the payoff). Covers the verified store specs (Apple's 886 x 1920 and 1200 x 1600 sizes, 30 fps cap, H.264 settings, the 5 second poster frame; Play's YouTube link rules), what each store rejects (hands, prices, dates, footage outside the app), muted-first design, native full-screen framing with touch hotspots, frame budgets, export and ffprobe checks. Load it when the ask is a store listing preview, not a general product video.",
+  "summary": "Up to three standalone 15–30 s store previews per locale: verified sizes and encoding, muted-first, native UI, the poster frame.",
+  "kind": "workflow",
+  "category": "Launch",
+  "tags": [
+    "app-store",
+    "play-store",
+    "preview",
+    "mobile",
+    "store-listing",
+    "aso"
+  ],
+  "aspects": [
+    "9:16",
+    "16:9"
+  ],
+  "duration": {
+    "minSeconds": 15,
+    "maxSeconds": 30
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "launch-taste"
+    },
+    {
+      "kind": "skill",
+      "id": "screen-capture"
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "The real, current-build screen recordings the whole preview depends on."
+    },
+    {
+      "kind": "capability",
+      "id": "web-research",
+      "why": "Re-checking the stores' current preview specs before submission."
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Encoding to the store's exact spec, adding a stereo track and probing the result."
+    },
+    {
+      "kind": "capability",
+      "id": "music",
+      "why": "An optional licensed track for sound-on viewers."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "The frame-15, poster-frame and muted-review checks."
+    },
+    {
+      "kind": "skill",
+      "id": "three-look",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-transitions",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "device-mockup",
+      "engines": [
+        "three"
+      ]
+    }
+  ],
+  "route": {
+    "deliverable": "Up to three 15–30 second App Store or Google Play preview videos built from the app's own screens, to the store's exact spec",
+    "inputs": [
+      "screen-recording",
+      "brief"
+    ],
+    "priority": 20,
+    "askFirst": [
+      "Which store, and which devices (iPhone, iPad)?",
+      "Do you have screen recordings of the current build?",
+      "Which languages does the listing need?"
+    ]
+  },
+  "models": [],
+  "triggers": [
+    "make an App Store preview video",
+    "I need a Play Store listing video",
+    "app store preview for our app",
+    "preview video for our app page",
+    "15 second video for the store listing",
+    "iPhone app preview at 886 by 1920",
+    "google play promo video"
+  ],
+  "templates": [],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.3.1",
+  "icon": "📱"
+}

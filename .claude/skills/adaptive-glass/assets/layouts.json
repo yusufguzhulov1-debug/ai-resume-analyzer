@@ -1,0 +1,53 @@
+{
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "safeBox": {
+    "xMin": 72,
+    "xMax": 900,
+    "yMin": 269,
+    "yMax": 1248
+  },
+  "centerX": 540,
+  "half": {
+    "paneTop": 960,
+    "paneHeight": 960,
+    "foreground": {
+      "left": 43.2,
+      "top": -360,
+      "width": 993.6,
+      "height": 1766.4
+    },
+    "background": {
+      "left": -20,
+      "top": -440,
+      "width": 1120,
+      "height": 1991
+    }
+  },
+  "third": {
+    "paneTop": 1120,
+    "paneHeight": 800,
+    "foreground": {
+      "left": 151.2,
+      "top": -285,
+      "width": 777.6,
+      "height": 1382.4
+    },
+    "background": {
+      "left": -20,
+      "top": -565,
+      "width": 1120,
+      "height": 1991
+    }
+  },
+  "captionAnchors": {
+    "face": 0.235,
+    "split-half": 0.55,
+    "split-third": 0.595,
+    "full-proof": 0.615
+  },
+  "note": "Crop starting points for a 1080x1920 portrait plate with generous headroom. Adjust per take from real frames. Measure caption bounds, especially two-line text in full proof."
+}

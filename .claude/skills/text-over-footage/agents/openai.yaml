@@ -1,0 +1,6 @@
+interface:
+  display_name: "Style: Text Over Footage"
+  short_description: "One readable line over B-roll that matches the joke"
+  default_prompt: "Use $text-over-footage with $edit-video to make a short text reel from this line and my B-roll."
+policy:
+  allow_implicit_invocation: true

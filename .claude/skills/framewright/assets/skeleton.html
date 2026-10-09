@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>framewright project</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+canvas{display:block;margin:0 auto;max-width:100vw;max-height:100vh}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+'use strict';
+/* =====================================================================
+   framewright skeleton. One file, one canvas. A frame is a pure function of
+   (frame number, seed, width). No images, no video, no base64, no CDN.
+   URL knobs:  ?f=140  ?s=12  ?w=1920  ?grid=24  ?cw=480  ?from=60&to=180  ?ar=16:9
+   Without knobs the page plays a live preview (capped at 960 px wide).
+   A film without cuts (one line, one camera journey) starts from assets/world.html instead.
+   Layout of this file: params -> generators -> math -> helpers -> data -> engine -> plates -> boot.
+   Keep every helper ABOVE the plates block. Never put helpers between plates.
+   ===================================================================== */
+
+/* ---------- parameters ---------- */
+const Q = new URLSearchParams(location.search);
+const FPS = 30, BPM = 120;
+const BEAT = Math.round(FPS * 60 / BPM), BAR = BEAT * 4;   // 120 BPM -> beat 15 frames, bar 60
+const SHORT = 1080;                                        // logical short side, all geometry lives here
+function parseAR(s){ const m=/^(\d+(?:\.\d+)?)[:x\/](\d+(?:\.\d+)?)$/.exec(s||''); return m ? (+m[1])/(+m[2]) : 16/9; }
+const AR = parseAR(Q.get('ar') || '16:9');
+const LW = AR >= 1 ? Math.round(SHORT*AR) : SHORT;         // logical width
+const LH = AR >= 1 ? SHORT : Math.round(SHORT/AR);         // logical height
+const CX = LW/2, CY = LH/2;
+const SEED  = +(Q.get('s') || 7);
+const WIDTH = +(Q.get('w') || 1920);
+const SAFE  = 0.08;                                        // keep important content this far from edges (fraction of LH)
+const TITLE_Y = AR < 1 ? 0.70 : 0.80;                      // baseline of lower titles; in 9:16 the bottom 20 % belongs to platform UI
+
+/* ---------- generators ---------- */
+function hash(){ // any arguments -> 32-bit seed
+  let h = 2166136261 >>> 0;
+  for (let k=0;k<arguments.length;k++){ const s=String(arguments[k])+'|';
+    for (let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } }
+  h ^= h>>>13; h = Math.imul(h, 0x5bd1e995); h ^= h>>>15;
+  return h >>> 0;
+}
+function rng(seed){ // sfc32
+  let a=seed>>>0, b=0x9e3779b9, c=0x6a09e667, d=0xbb67ae85;
+  const f=()=>{ a>>>=0;b>>>=0;c>>>=0;d>>>=0; let t=(a+b)|0; a=b^(b>>>9); b=(c+(c<<3))|0; c=(c<<21)|(c>>>11); d=(d+1)|0; t=(t+d)|0; c=(c+t)|0; return (t>>>0)/4294967296; };
+  for(let i=0;i<12;i++) f();
+  return {
+    f, r:(lo,hi)=>lo+(hi-lo)*f(), i:(n)=>Math.floor(f()*n), pick:(arr)=>arr[Math.floor(f()*arr.length)],
+    sign:()=>f()<0.5?-1:1, chance:(p)=>f()<p,
+    g:()=>{ let u=0,v=0; while(u===0)u=f(); while(v===0)v=f(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+  };
+}
+
+/* ---------- math ---------- */
+const clamp=(v,a=0,b=1)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const span=(f,a,b)=>clamp((f-a)/(b-a));                    // progress of f between a and b, 0..1
+const smooth=t=>{t=clamp(t);return t*t*(3-2*t)};
+const ease=Object.freeze({                                 // frozen, like COL: a plate that edits shared values breaks render order
+  out:t=>1-Math.pow(1-clamp(t),3), in:t=>Math.pow(clamp(t),3),
+  io:t=>{t=clamp(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2},
+  back:t=>{const c=1.70158;t=clamp(t);return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)},
+  elastic:t=>{t=clamp(t);return t===0||t===1?t:Math.pow(2,-10*t)*Math.sin((t*10-0.75)*(2*Math.PI/3))+1}
+});
+const pad=(n,w=2)=>String(n).padStart(w,'0');
+
+/* ---------- canvas pool ---------- */
+const POOL={};
+function cvs(name,w,h){ let c=POOL[name]; if(!c){ c=document.createElement('canvas'); c.getContext('2d',{willReadFrequently:true}); POOL[name]=c; } if(c.width!==w||c.height!==h){ c.width=w; c.height=h; } return c; }
+/* a pooled canvas keeps its context from frame to frame: wipe it before drawing, or a save() without restore(), a clip,
+   a shadow or a composite mode left by one frame leaks into the next and frames start to depend on render order */
+function wipe(g){ if(g.reset) g.reset(); else g.canvas.width=g.canvas.width; return g; }
+
+/* ---------- palette (replace with the palette of your style) ---------- */
+const COL=Object.freeze({ bg:'#0b0d12', ink:'#f2f4f8', accent:'#ffb020', dim:'#5b6270' });
+const FONT_MONO='Menlo, Monaco, "Courier New", monospace';
+const FONT_SANS='"Helvetica Neue", Helvetica, Arial, sans-serif';
+
+/* =====================================================================
+   HELPERS (all above the plates block)
+   ===================================================================== */
+
+/* ---- pixel text: system font -> threshold -> nearest-neighbour upscale. Gives bitmap/teletext/OSD look.
+   o: x,y, px (font size in glyph pixels, 14 is good), cell (logical units per glyph pixel),
+      align left|center|right, base top|middle|bottom, color, bg, pad, reveal 0..1, fit (max width), alpha ---- */
+const GLYPH={};
+function glyphs(str,o){
+  const px=o.px||14, font=`${o.weight||'bold'} ${px}px ${o.font||FONT_MONO}`, thr=(o.thr||0.5)*255;
+  const key=str+'~#~'+font+'~#~'+thr;
+  if(GLYPH[key]) return GLYPH[key];
+  const m=document.createElement('canvas'); let mg=m.getContext('2d'); mg.font=font;
+  const tw=Math.ceil(mg.measureText(str).width)+6, th=Math.ceil(px*1.7)+6;
+  m.width=tw; m.height=th; mg=m.getContext('2d'); mg.font=font; mg.fillStyle='#fff'; mg.textBaseline='alphabetic';
+  mg.fillText(str,3,Math.round(px*1.2));
+  const id=mg.getImageData(0,0,tw,th), d=id.data; let x0=tw,x1=-1,y0=th,y1=-1;
+  for(let y=0;y<th;y++)for(let x=0;x<tw;x++){ const i=(y*tw+x)*4; const on=d[i+3]>thr; d[i]=d[i+1]=d[i+2]=255; d[i+3]=on?255:0;
+    if(on){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; } }
+  if(x1<0){x0=0;x1=0;y0=0;y1=0;}
+  mg.putImageData(id,0,0);
+  return GLYPH[key]={c:m,x0,y0,w:x1-x0+1,h:y1-y0+1};
+}
+function pixW(str,o){ return glyphs(str,o).w*(o.cell||6); }
+function pixText(g,str,o){
+  const G=glyphs(str,o); let cell=o.cell||6; if(o.fit) cell=Math.max(1,Math.min(cell,Math.floor(o.fit/G.w)));
+  const w=G.w*cell, h=G.h*cell;
+  let x=o.x, y=o.y;
+  if(o.align==='center') x-=w/2; else if(o.align==='right') x-=w;
+  if(o.base==='middle') y-=h/2; else if(o.base==='bottom') y-=h;
+  x=Math.round(x/cell)*cell; y=Math.round(y/cell)*cell;      // snap to the glyph grid, otherwise letters shimmer
+  if(o.bg){ const p=(o.pad??1)*cell; g.fillStyle=o.bg; g.fillRect(x-p,y-p,w+2*p,h+2*p); }
+  const rev=o.reveal??1; if(rev<=0) return {x,y,w,h};
+  const sw=Math.max(1,Math.round(G.w*rev));
+  const t=cvs('tint',G.w,G.h), tg=t.getContext('2d');
+  tg.clearRect(0,0,G.w,G.h); tg.drawImage(G.c,G.x0,G.y0,G.w,G.h,0,0,G.w,G.h);
+  tg.globalCompositeOperation='source-in'; tg.fillStyle=o.color||COL.ink; tg.fillRect(0,0,G.w,G.h); tg.globalCompositeOperation='source-over';
+  g.save(); g.imageSmoothingEnabled=false; if(o.alpha!=null) g.globalAlpha=o.alpha;
+  g.drawImage(t,0,0,sw,G.h,x,y,sw*cell,h);
+  g.restore();
+  return {x,y,w,h};
+}
+
+/* ---- vector text with the same alignment API, for large display type ---- */
+function vecText(g,str,o){
+  g.save(); g.font=`${o.weight||'bold'} ${o.size||120}px ${o.font||FONT_SANS}`; g.fillStyle=o.color||COL.ink;
+  g.textAlign=o.align||'left'; g.textBaseline=o.base||'alphabetic'; if(o.alpha!=null) g.globalAlpha=o.alpha;
+  g.fillText(str,o.x,o.y); g.restore();
+}
+
+/* ---- deterministic per-pixel finisher. Grain and vignette only; put your style's post-processing here
+   (halftone, scanlines, barrel, misregistration...). Runs on output pixels, ~50 ms per 1080p pass. ---- */
+function post(src,dst,S,o={}){
+  const W=src.width,H=src.height, sg=src.getContext('2d'), dg=wipe(dst.getContext('2d'));   // the target keeps nothing of the previous frame
+  const grain=(o.grain??0)*(S.grain??1), vig=o.vig??0;
+  if(!grain && !vig){ dg.drawImage(src,0,0); return; }
+  const id=sg.getImageData(0,0,W,H), d=id.data, cx=(W-1)/2, cy=(H-1)/2;
+  let z=hash(S.seed,'grain',S.f)|0;
+  for(let y=0;y<H;y++){ const ny=(y-cy)/cy;
+    for(let x=0;x<W;x++){ const i=(y*W+x)*4; const nx=(x-cx)/cx, r2=nx*nx+ny*ny;
+      z=(Math.imul(z,1664525)+1013904223)|0; const gn=((z>>>24)/255-0.5)*grain; const v=1-vig*Math.pow(r2*0.5,1.4);
+      d[i]=clamp(d[i]*v+gn,0,255); d[i+1]=clamp(d[i+1]*v+gn,0,255); d[i+2]=clamp(d[i+2]*v+gn,0,255); } }
+  dg.putImageData(id,0,0);
+}
+
+/* ---- generated data goes between markers so scripts can replace it (see scripts/inject.mjs) ---- */
+/*PORTRAIT_START*/
+const PORTRAIT={"w":1,"h":1,"levels":[]};
+/*PORTRAIT_END*/
+
+/* =====================================================================
+   ENGINE
+   ===================================================================== */
+const PLATES=[];
+/* plate(name, {len, cutIn, cutOut}, fn). len in frames, keep it a multiple of BEAT.
+   fn(S,R): S.t 0..1 progress, S.i local frame, S.f global frame, S.len, S.g context (logical coords),
+   S.b generator re-seeded every 3 frames (live line), S.nz generator per frame (noise),
+   R generator stable for the whole plate (composition). Seeds derive from the plate NAME, so
+   inserting a plate never changes its neighbours. */
+function plate(name,opts,fn){ if(PLATES.some(p=>p.name===name)) console.warn(`duplicate plate name: ${name}`); PLATES.push(Object.assign({name,fn},opts)); }
+function TOTAL(){ return PLATES.reduce((a,p)=>a+p.len,0); }
+function locate(n){ let acc=0; for(let i=0;i<PLATES.length;i++){ if(n<acc+PLATES[i].len) return {idx:i,local:n-acc}; acc+=PLATES[i].len; } const i=PLATES.length-1; return {idx:i,local:PLATES[i].len-1}; }
+/* at(name, x): the global frame of beat x of plate `name`, rounded to a whole frame (x=0: its first frame).
+   For what carries on across cuts (an island that grows through three plates): span(S.f, at('sea'), at('city',4)).
+   Call it while drawing, not at the top level: the plates below are not registered yet. */
+function at(name,x=0){ let acc=0; for(const p of PLATES){ if(p.name===name) return Math.round(acc+x*BEAT); acc+=p.len; } throw new Error(`at(): no plate named ${name}`); }
+/* cue(name): the frame of a moment in CUES, the table the picture and the sound share (RISO.curves() exports it) */
+function cue(name){ const c=CUES.find(c=>c[2]===name); if(!c) throw new Error(`cue(): no cue named ${name}`); return at(c[0],c[1]); }
+
+/* transition drawn by the engine at plate edges; replace with the cut of your style (or leave empty) */
+function cut(g,S,amt){ g.save(); g.setTransform(1,0,0,1,0,0); g.fillStyle=`rgba(0,0,0,${amt})`; g.fillRect(0,0,g.canvas.width,g.canvas.height); g.restore(); }   // in pixels: every row, at any width
+
+function renderFrame(n,width,seed,target){
+  n=((n%TOTAL())+TOTAL())%TOTAL();
+  const W=Math.round(width); let H=Math.round(W/AR); if(H%2) H++;   // even height for libx264
+  const cv=cvs('content',W,H), g=wipe(cv.getContext('2d')), sc=W/LW;   // a clean context every frame
+  const {idx,local}=locate(n), P=PLATES[idx];
+  const S={ f:n, i:local, t:local/P.len, len:P.len, g, cv, sc, seed, W:LW, H:LH, name:P.name, post:{},
+            b:rng(hash(seed,'b',P.name,Math.floor(n/3))), nz:rng(hash(seed,'nz',n)) };
+  const R=rng(hash(seed,'plate',P.name));
+  g.fillStyle=COL.bg; g.fillRect(0,0,W,H);                   // in pixels, before the scale: LH*sc can fall short of the even H (853.33 of 854 rows in 9:16 at 480)
+  g.setTransform(sc,0,0,sc,0,0); g.imageSmoothingEnabled=true;
+  P.fn(S,R);
+  const edgeIn=local, edgeOut=P.len-1-local;
+  if(P.cutIn!==false && edgeIn<3) cut(g,S,1-edgeIn/3);
+  else if(P.cutOut!==false && edgeOut<2) cut(g,S,1-edgeOut/2);
+  g.setTransform(1,0,0,1,0,0);
+  if(target.width!==W||target.height!==H){ target.width=W; target.height=H; }
+  post(cv,target,S,S.post);
+  return S;
+}
+
+function contactSheet(n,cellW,seed,target,f0=0,f1=TOTAL()-1){   // f0..f1: a sheet of one section
+  const cols=AR>=1?6:8, rows=Math.ceil(n/cols), cellH=Math.round(cellW/AR), lab=26, gap=8;
+  const SW=cols*(cellW+gap)+gap, SH=rows*(cellH+lab+gap)+gap;
+  target.width=SW; target.height=SH; const g=target.getContext('2d');
+  g.fillStyle='#181818'; g.fillRect(0,0,SW,SH);
+  const tmp=cvs('cell',cellW*2,Math.round(cellW*2/AR));     // render at 2x, downscale: post-processing stays honest
+  for(let i=0;i<n;i++){
+    const f=n>1?Math.round(f0+i*(f1-f0)/(n-1)):f0;
+    const S=renderFrame(f,cellW*2,seed,tmp);
+    const x=gap+(i%cols)*(cellW+gap), y=gap+Math.floor(i/cols)*(cellH+lab+gap);
+    g.drawImage(tmp,x,y,cellW,cellH);
+    g.fillStyle='#ddd'; g.font='12px Menlo, monospace'; g.textBaseline='top';
+    g.fillText(`f=${f}  ${S.name}  t=${S.t.toFixed(2)}  ${(f/FPS).toFixed(1)}s`,x+2,y+cellH+6);
+  }
+}
+
+/* =====================================================================
+   PLATES. Lengths are multiples of BEAT. Replace the demo plate with your scenes.
+   ===================================================================== */
+
+/* moments the picture and the sound share: [plate, beat, name], beats counted from the plate's start.
+   A plate reads one with cue(name); RISO.curves() exports them and audio.mjs puts its hits on the same frames. */
+const CUES=[ ['title',4,'mark'] ];                        // demo cue: replace with the film's cues (or leave the table empty)
+
+/* demo: title card with a moving marker, proves the pipeline end to end */
+plate('title',{len:2*BAR, cutIn:false},(S,R)=>{
+  const g=S.g, m=Math.round(LH*SAFE);
+  const grd=g.createRadialGradient(CX,CY,LH*0.1,CX,CY,LH*0.9); grd.addColorStop(0,'rgba(255,176,32,0.18)'); grd.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=grd; g.fillRect(0,0,LW,LH);
+  vecText(g,'FRAMEWRIGHT',{x:CX,y:CY-LH*0.02,size:Math.min(LH*0.16,LW*0.11),align:'center',base:'middle',color:COL.ink});
+  pixText(g,`seed ${S.seed}  frame ${pad(S.f,4)}  ${LW}x${LH}`,{x:CX,y:CY+LH*0.14,px:14,cell:5,fit:LW-2*m,align:'center',base:'middle',color:COL.accent});
+  pixText(g,'replace this plate with your first scene',{x:CX,y:LH*TITLE_Y,px:14,cell:4,fit:LW-2*m,align:'center',base:'bottom',color:COL.dim});   // lower text on TITLE_Y: clear of the platform's buttons in 9:16
+  const p=ease.io(S.t), x=lerp(m,LW-m,p), y=CY-LH*0.22+Math.sin(S.t*Math.PI*4)*LH*0.02;
+  g.fillStyle=COL.accent; g.beginPath(); g.arc(x,y,LH*0.012+S.b.r(0,2),0,Math.PI*2); g.fill();
+  const k=S.f-cue('mark');                                   // frames since the cue: the sound hits on the same frame
+  if(k>=0 && k<12){ g.strokeStyle=COL.accent; g.lineWidth=4; g.globalAlpha=1-k/12; g.beginPath(); g.arc(x,y,LH*(0.02+0.006*k),0,Math.PI*2); g.stroke(); g.globalAlpha=1; }
+  S.post.grain=6; S.post.vig=0.25;
+});
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+const MAIN=document.getElementById('c'); MAIN.getContext('2d',{willReadFrequently:true});   // read back every frame: keep it on the CPU
+window.RISO={
+  fps:FPS,
+  get total(){ return TOTAL(); },
+  get plates(){ return PLATES.map(p=>({name:p.name,len:p.len})); },
+  frame(n,width,seed){ renderFrame(n,width??WIDTH,seed??SEED,MAIN); return MAIN.toDataURL('image/png'); },
+  contact(n,cellW,f0,f1){ contactSheet(n||24,cellW||480,SEED,MAIN,f0??0,f1??TOTAL()-1); return MAIN.toDataURL('image/png'); },
+  // plate starts for the soundtrack (scripts/export-curves.mjs -> curves.json -> audio.mjs builds its T table from it).
+  // frames stays empty here; fill it per frame when the sound should follow something on screen (references/audio.md, section 7).
+  // cues: the CUES table as {name, plate, beat, f}, f the frame the picture shows it on.
+  curves(){ const start={}; let acc=0; for(const p of PLATES){ start[p.name]=acc; acc+=p.len; }
+    return {fps:FPS,bpm:BPM,total:acc,start,frames:[],cues:CUES.map(([plate,beat,name])=>{ if(!PLATES.some(p=>p.name===plate)) throw new Error(`CUES row ${name}: no plate named ${plate}`);
+      return {name,plate,beat,f:at(plate,beat)}; })}; }
+};
+window.addEventListener('load',()=>{
+  if(Q.has('grid')){ contactSheet(+Q.get('grid')||24,+Q.get('cw')||480,SEED,MAIN,+(Q.get('from')||0),Q.has('to')?+Q.get('to'):TOTAL()-1); window.__ready=true; }
+  else if(Q.has('f')){ renderFrame(+Q.get('f')||0,WIDTH,SEED,MAIN); window.__ready=true; }
+  else { let f=+(Q.get('from')||0), last=0;
+    const tick=(ts)=>{ if(ts-last>=1000/FPS){ last=ts; renderFrame(f++,Math.min(WIDTH,960),SEED,MAIN); } requestAnimationFrame(tick); };
+    requestAnimationFrame(tick); window.__ready=true; }
+});
+</script>
+</body>
+</html>

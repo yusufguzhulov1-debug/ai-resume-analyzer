@@ -1,0 +1,14 @@
+# Shot list
+
+One row per scene. The scene cell is the scene id in `src.html.tmpl` (`s1`). If you cannot say why a
+scene exists, it does not belong in the render: delete the scene and its row. Edit the rows when you
+add, remove or rename a scene. Do not delete this file: `build.py` checks it only while it exists.
+
+| scene | purpose | entry state | exit state |
+| --- | --- | --- | --- |
+| s1 | The hook: the full hook text is static from frame 0, one real app item card slides in | Frame 0 already shows the hook text on the background; no fade from empty | The hook has punched twice and the item card is settled on screen |
+| s2 | The app: show the real product on a phone with two rebuilt screens | The hook has cleared and the phone is about to slide in | Both screens have shown their rows and the tap has landed |
+| s3 | The drop: the strongest real feature, slammed on the drop | The phone has left and the feature word is hidden | The feature is settled at full size after the flash and shake |
+| s4 | Benefits: three short true benefits, one per half bar | The feature has cleared | All three benefits have appeared and held long enough to read |
+| s5 | Value: a two-part value word and one true line | The benefits have cleared | The value word and the claim line are settled |
+| s6 | End card: icon, name, tagline, call to action, stores, URL | The value scene has cleared | Every end card line is in and holds until the last frame |

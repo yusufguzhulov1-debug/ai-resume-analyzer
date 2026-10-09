@@ -1,0 +1,54 @@
+{
+  "default": "soft-violet",
+  "note": "Starting palettes, not a brand. Inspect the real footage (shirt, room, skin and proof) and adapt; keep one color family per reel. Use dark heading ink on a light field and light text on deep glass.",
+  "palettes": {
+    "soft-violet": {
+      "description": "Light violet field with deep violet glass. Suits a dark shirt in a purple or neutral room.",
+      "background": "#875ec1",
+      "backgroundGlow": "#aa86dc",
+      "backgroundDeep": "#6b42a3",
+      "headingInk": "#271139",
+      "text": "#f7f8fc",
+      "mutedText": "#eee4ff",
+      "glassBase": "rgba(32,11,54,.45)",
+      "glassRim": "rgba(246,233,255,.62)",
+      "accentFill": "rgba(212,172,255,.26)",
+      "labelBase": "rgba(43,16,67,.54)",
+      "captionBacking": "#251034",
+      "captionBackingOpacity": 0.56,
+      "gridOpacity": 0
+    },
+    "deep-violet": {
+      "description": "Dark violet field for a moodier look or brighter footage.",
+      "background": "#241831",
+      "backgroundGlow": "#62438b",
+      "backgroundDeep": "#17121f",
+      "headingInk": "#faf5ff",
+      "text": "#f7f8fc",
+      "mutedText": "#eee4ff",
+      "glassBase": "rgba(23,15,35,.7)",
+      "glassRim": "rgba(225,202,255,.45)",
+      "accentFill": "rgba(212,172,255,.26)",
+      "labelBase": "rgba(43,16,67,.54)",
+      "captionBacking": "#1f152b",
+      "captionBackingOpacity": 0.78,
+      "gridOpacity": 0
+    },
+    "charcoal": {
+      "description": "Neutral charcoal with warm-white text. Works with most footage and product colors.",
+      "background": "#2a2a2e",
+      "backgroundGlow": "#45454c",
+      "backgroundDeep": "#151517",
+      "headingInk": "#f7f4ee",
+      "text": "#f7f4ee",
+      "mutedText": "#d6d1c7",
+      "glassBase": "rgba(18,18,20,.55)",
+      "glassRim": "rgba(247,244,238,.4)",
+      "accentFill": "rgba(247,244,238,.14)",
+      "labelBase": "rgba(18,18,20,.58)",
+      "captionBacking": "#141416",
+      "captionBackingOpacity": 0.6,
+      "gridOpacity": 0
+    }
+  }
+}

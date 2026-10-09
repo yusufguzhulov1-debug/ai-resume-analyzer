@@ -1,0 +1,22 @@
+{
+  "name": "demo-video-remotion-starter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts ProductDemo out/product-demo-1080p.mp4 --codec=h264 --audio-codec=aac --pixel-format=yuv420p",
+    "render:4k": "remotion render src/index.ts ProductDemo4K out/product-demo-4k.mp4 --codec=h264 --audio-codec=aac --pixel-format=yuv420p"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/media": "^4.0.0",
+    "@remotion/sfx": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.0.0"
+  }
+}

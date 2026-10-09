@@ -1,0 +1,24 @@
+{
+  "name": "paper-cut-video-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "render:character": "remotion render src/index.ts PaperCharacterScene out/paper-character-scene.mp4",
+    "render:explainer": "remotion render src/index.ts PaperExplainer out/paper-explainer.mp4",
+    "render:flow": "remotion render src/index.ts PaperFlow out/paper-flow.mp4",
+    "render:outro": "remotion render src/index.ts PaperOutro out/paper-outro.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.486",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.486"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.5.4"
+  }
+}

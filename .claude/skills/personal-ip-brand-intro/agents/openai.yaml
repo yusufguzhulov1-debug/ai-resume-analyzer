@@ -1,0 +1,4 @@
+interface:
+  display_name: "個人 IP 品牌開場"
+  short_description: "以文字、圖片與節拍製作原創個人 IP 品牌開場動畫"
+  default_prompt: "使用 $personal-ip-brand-intro，根據我的品牌資料、可選圖片與音樂，製作原創個人 IP 品牌開場動畫。"

@@ -1,0 +1,56 @@
+{
+  "name": "Adaptive glass example; replace the media paths and copy",
+  "fps": 30,
+  "durationFrames": 240,
+  "cameraSource": "../assets/camera-clean.mp4",
+  "palette": "soft-violet",
+  "glassMaterial": "optical",
+  "glassTone": "dark",
+  "scenes": [
+    {
+      "id": "hook",
+      "startFrame": 0,
+      "endFrame": 45,
+      "layout": "split-half",
+      "type": "media-bleed",
+      "media": [
+        {
+          "path": "../assets/hook-proof.mp4",
+          "startFrame": 0,
+          "endFrame": 45,
+          "fit": "cover",
+          "objectPosition": "50% 40%"
+        }
+      ]
+    },
+    {
+      "id": "point",
+      "startFrame": 45,
+      "endFrame": 105,
+      "layout": "face",
+      "type": "none"
+    },
+    {
+      "id": "result",
+      "startFrame": 105,
+      "endFrame": 180,
+      "layout": "split-half",
+      "type": "media-card",
+      "media": [
+        {
+          "path": "../assets/result.png",
+          "startFrame": 105,
+          "endFrame": 180,
+          "fit": "contain"
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "startFrame": 180,
+      "endFrame": 240,
+      "layout": "face",
+      "type": "none"
+    }
+  ]
+}

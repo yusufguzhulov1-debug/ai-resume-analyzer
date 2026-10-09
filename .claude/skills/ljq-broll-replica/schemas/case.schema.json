@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ljq.local/schemas/case.schema.json",
+  "title": "LJQ B-roll replication case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "status", "source", "stages", "files", "iteration", "knownDifferences"],
+  "properties": {
+    "schemaVersion": {"enum": ["1.1", "1.2"]},
+    "caseId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "status": {"enum": ["draft", "in_progress", "ready_for_qa", "passed", "blocked"]},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "bytes", "modifiedTime", "sha256", "width", "height", "fps", "durationSeconds", "declaredFrames", "decodedFrames", "shotRange", "hasAudio"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "bytes": {"type": "integer", "minimum": 1},
+        "modifiedTime": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[A-Fa-f0-9]{64}$"},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "fps": {"type": "number", "exclusiveMinimum": 0},
+        "durationSeconds": {"type": "number", "exclusiveMinimum": 0},
+        "declaredFrames": {"type": ["integer", "null"], "minimum": 1},
+        "decodedFrames": {"type": "integer", "minimum": 1},
+        "shotRange": {
+          "type": "array",
+          "prefixItems": [
+            {"type": "integer", "minimum": 0},
+            {"type": "integer", "minimum": 0}
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "hasAudio": {"type": "boolean"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["startSeconds", "endSeconds", "durationSeconds", "include", "exclude", "excludedRegionMode", "exclusionMask", "confirmation"],
+      "properties": {
+        "startSeconds": {"type": "number", "minimum": 0},
+        "endSeconds": {"type": "number", "exclusiveMinimum": 0},
+        "durationSeconds": {"type": "number", "exclusiveMinimum": 0},
+        "include": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "exclude": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "excludedRegionMode": {"enum": ["none", "blank", "transparent", "background"]},
+        "exclusionMask": {"type": ["string", "null"]},
+        "confirmation": {"type": "string", "minLength": 1}
+      }
+    },
+    "stages": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preflight", "layout", "motion", "implementation", "qa"],
+      "properties": {
+        "preflight": {"$ref": "#/$defs/stageStatus"},
+        "layout": {"$ref": "#/$defs/stageStatus"},
+        "motion": {"$ref": "#/$defs/stageStatus"},
+        "implementation": {"$ref": "#/$defs/stageStatus"},
+        "qa": {"$ref": "#/$defs/stageStatus"}
+      }
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "sourceEvidence", "layout", "motion", "validation", "composition", "propsSchema", "render"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "sourceEvidence": {"type": "string", "minLength": 1},
+        "layout": {"type": ["string", "null"]},
+        "motion": {"type": ["string", "null"]},
+        "validation": {"type": ["string", "null"]},
+        "composition": {"type": ["string", "null"]},
+        "propsSchema": {"type": ["string", "null"]},
+        "render": {"type": ["string", "null"]},
+        "qaGates": {"type": ["string", "null"]}
+      }
+    },
+    "iteration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxCorrections", "correctionsUsed", "lastRootCause"],
+      "properties": {
+        "maxCorrections": {"const": 2},
+        "correctionsUsed": {"type": "integer", "minimum": 0, "maximum": 2},
+        "lastRootCause": {"type": ["string", "null"]}
+      }
+    },
+    "knownDifferences": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schemaVersion": {"const": "1.2"}}},
+      "then": {
+        "type": "object",
+        "required": ["scope"],
+        "properties": {"files": {"type": "object", "required": ["qaGates"]}}
+      }
+    }
+  ],
+  "$defs": {
+    "stageStatus": {"enum": ["pending", "in_progress", "passed", "needs_review", "blocked", "skipped"]}
+  }
+}

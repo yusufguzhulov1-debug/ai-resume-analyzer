@@ -1,0 +1,91 @@
+{
+  "id": "ugc-hooks",
+  "title": "UGC hooks",
+  "description": "The first 1.5 to 3 seconds of a UGC or social ad: the visual plus verbal plus rhythm triple, frame-zero rules with frame timings, eight hook families matched to audience temperature, how each family is built as the opening scene on any engine, hook variants (three openings on one body, built as swappable scenes), and a library of sixty-plus hook lines with their paired visuals. Load it whenever you write, choose or rewrite an opening, or the user says an ad starts slow.",
+  "summary": "The first 1.5–3 seconds: the visual, verbal and rhythm triple, eight families by temperature, swappable hook variants, sixty-plus lines.",
+  "kind": "reference",
+  "category": "UGC ads",
+  "tags": [
+    "ugc",
+    "hooks",
+    "first-frame",
+    "copywriting",
+    "variants",
+    "social-ads"
+  ],
+  "aspects": [
+    "9:16",
+    "1:1",
+    "4:5"
+  ],
+  "duration": {
+    "minSeconds": 2,
+    "maxSeconds": 5
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "ugc-ad-foundations"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "Frame 0, frame 6 and frame 15 are judged by looking at them."
+    },
+    {
+      "kind": "capability",
+      "id": "generate-image",
+      "why": "Most hook plates are a staged still nobody has a photo of."
+    }
+  ],
+  "models": [
+    {
+      "purpose": "image",
+      "model": "Gemini 2.5 Flash Image",
+      "via": "generate-image",
+      "note": "Available light, mid-gesture, imperfect framing."
+    },
+    {
+      "purpose": "voice",
+      "model": "ElevenLabs v3",
+      "via": "voiceover",
+      "note": "Flat delivery. A performed hook reads as an ad."
+    },
+    {
+      "purpose": "sfx",
+      "model": "ElevenLabs SFX",
+      "via": "sfx",
+      "note": "One transient on frame 1."
+    }
+  ],
+  "triggers": [
+    "my ad starts too slow",
+    "write a scroll-stopping hook for this ad",
+    "give me three different openings to test",
+    "the first three seconds are weak",
+    "what should the first frame of my TikTok be",
+    "make hook variants of this ad"
+  ],
+  "templates": [],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.1",
+  "icon": "🪝"
+}

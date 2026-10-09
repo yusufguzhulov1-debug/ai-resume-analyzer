@@ -1,0 +1,322 @@
+---
+name: appshot-images
+description: Generate App Store and Google Play screenshot designs. Use when the user wants to create store listing images, screenshot mockups, or promotional graphics for a mobile app. Builds on appshot-core foundation.
+user-invocable: true
+argument-hint: "[app name] [--quick] [--count 6]"
+license: MIT
+metadata:
+  author: kiennguyen
+  version: 2.0.0
+---
+
+# Appshot Images — App Store Screenshot Generator
+
+You are a creative director for App Store screenshots. Your job is to present the app's best features in a sequence of static images that convert browsers into downloaders.
+
+## Prerequisites
+
+Read [appshot-core SKILL.md](../appshot-core/SKILL.md) for primitives library, config schema, device dimensions, and store requirements.
+
+## Output directory
+
+All generated files go into `[target-project]/appshot-images/`. Never write into the appshot `template/` directory.
+
+Structure:
+```
+[target-project]/appshot-images/
+├── html/           ← HTML source files
+├── ios/            ← rendered PNGs for App Store
+├── android/        ← rendered PNGs for Google Play
+└── convert-screenshots.js  ← Puppeteer render script (if HTML format)
+```
+
+## CRITICAL: Phase gates
+
+You MUST complete phases in strict order. NEVER skip ahead. Each phase ends with an AskUserQuestion call — do NOT proceed to the next phase until the user responds. Do NOT combine multiple phases into one response.
+
+## Phases
+
+### Phase 1: Extract & confirm
+
+Run extraction from [appshot-core](../appshot-core/SKILL.md). If `.appshot-context.json` exists from a previous run (e.g., from running appshot-videos first), load it and confirm with the user instead of re-scanning.
+
+After presenting the extraction summary, you MUST call AskUserQuestion:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "Does this extraction look correct? Any details to adjust?",
+    header: "Extraction",
+    options: [
+      { label: "Looks good", description: "Proceed to screenshot strategy" },
+      { label: "Needs changes", description: "I'll tell you what to adjust" }
+    ],
+    multiSelect: false
+  }]
+})
+```
+
+After extraction is confirmed, run the **Collect screenshots** step from [appshot-core](../appshot-core/SKILL.md#collect-screenshots-optional). If the user provides screenshots, run the visual reference analysis and save the `visualSpec` to `.appshot-context.json`. Screenshots are reference material — they are never copied into the output project.
+
+STOP HERE. Do NOT proceed to Phase 2 until the user responds to both questions.
+
+### Phase 2: Screenshot strategy
+
+You MUST call AskUserQuestion with these choices:
+
+```
+AskUserQuestion({
+  questions: [
+    {
+      question: "What is the output target?",
+      header: "Target",
+      options: [
+        { label: "App Store Preview (Recommended)", description: "Full-bleed app screens, no device frames. Compliant with Apple/Google requirements." },
+        { label: "Marketing", description: "Device frames with text around them. For social media, website, pitch decks." }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "How many screenshots do you want?",
+      header: "Count",
+      options: [
+        { label: "4 screenshots", description: "Minimum effective set" },
+        { label: "6 screenshots (Recommended)", description: "Covers full user journey" },
+        { label: "8 screenshots", description: "Maximum detail" }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "Which layout style do you prefer?",
+      header: "Layout",
+      options: [
+        { label: "Full-bleed (Recommended for App Store Preview)", description: "App screen fills canvas. Text overlays on top." },
+        { label: "Device centered", description: "Phone frame centered with text above/below (Marketing only)" },
+        { label: "Device offset left", description: "Phone on left, text on right (Marketing only)" },
+        { label: "Device offset right", description: "Phone on right, text on left (Marketing only)" }
+      ],
+      multiSelect: false
+    }
+  ]
+})
+```
+
+Read [Output Targets](../appshot-core/SKILL.md#output-targets) for full rules on App Store Preview vs Marketing.
+
+After the user responds, decide ordering based on these principles:
+
+- **Screenshot 1 = hero shot.** Core value proposition. Most viewed. Often the only one seen.
+- **Screenshots 2-4 = key features.** Priority order — most used, most differentiating, biggest pain solved.
+- **Screenshot 5 = social proof or stats.** Concrete evidence the app delivers.
+- **Last screenshot = CTA or differentiator.** Final impression.
+
+**Rules:**
+- One feature per screenshot. Never two.
+- Every screenshot must depict actual app functionality — Apple requires this.
+- Device screens should show different states of the app. Never repeat the same screen.
+- The set should cover the full user journey: discovery, core action, result/payoff.
+
+Present the ordering plan, then you MUST call AskUserQuestion:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "Does this screenshot plan look good?",
+    header: "Strategy",
+    options: [
+      { label: "Approved", description: "Proceed to copy and creative" },
+      { label: "Reorder", description: "I want to change the screenshot order" },
+      { label: "Change features", description: "I want different features highlighted" }
+    ],
+    multiSelect: false
+  }]
+})
+```
+
+STOP HERE. Do NOT proceed to Phase 3 until the user approves.
+
+### Phase 3: Per-screenshot creative
+
+For each screenshot, define:
+- Hero feature (what the device screen shows)
+- Headline (4-6 words max)
+- Subtitle (one specific detail or number)
+- Device content description (actual app screen to display)
+- Background treatment (color, gradient, or pattern)
+
+**Device screen content rule:** Every mock screen must depict the app's primary persona doing a realistic task for that app's category. Derive this from the extracted `category`, `coreAction`, `valueProps`, and `features` in `.appshot-context.json`. Ask: "Would the target user recognize this as *their* workflow?" A voice notes app should show handwritten notes being captured, not a formal invoice. A fitness app should show a real workout, not a generic list. If a feature has multiple use cases, pick the one closest to the app's core value proposition.
+
+**Navigation chrome rule (App Store Preview target):** Every mock screen must include the app's navigation chrome from the extracted `navigation` data — status bar ("9:41" for iOS, "12:30" for Android), navigation bar (title, back button), tab bar (if the app uses tabs), and home indicator. This makes screenshots look like actual app screens. For the Marketing target, PhoneFrame provides the device context so chrome is optional.
+
+Read [copy-principles.md](../shared/copy-principles.md) before drafting any text. Present all copy together for review — the headlines must read as a coherent sequence.
+
+**Copy rules for screenshots:**
+
+**Headlines** — 4-6 words max. Benefit-first. One job per headline: provoke, state a benefit, or call to action. Include numbers or concrete outcomes.
+
+**Subtitles** — One specific detail or number. Not a second headline. A supporting fact.
+
+**Sequence test** — Read all headlines top-to-bottom. They should tell the complete app story without images.
+
+**ASO keyword integration** — Read the ASO section in [copy-principles.md](../shared/copy-principles.md). Headlines are the highest-weight text surface for search indexing. When choosing between two equally good phrasings, prefer the one that includes a target keyword from the extracted `keywords` list.
+
+**Common mistakes:**
+- Feature names as headlines ("Smart Recovery Mode") — use benefits ("Never lose your streak")
+- Repeating the app name in every headline — mention it once at most
+- Generic claims ("Easy to use") — waste the slot
+- Placeholder text — always draft real copy
+
+**Copy self-check:**
+- [ ] Headlines read as a coherent sequence top-to-bottom
+- [ ] Headlines collectively cover at least 3 extracted ASO keywords
+- [ ] Keywords spread across screenshots, not clustered in one
+- [ ] Every keyword used naturally — would a human copywriter write it this way?
+
+After presenting all copy, you MUST call AskUserQuestion:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "How does the copy look?",
+    header: "Copy",
+    options: [
+      { label: "Approved", description: "Proceed to generation" },
+      { label: "Revise headlines", description: "I want to adjust some headlines" },
+      { label: "Revise subtitles", description: "I want to adjust some subtitles" },
+      { label: "Start over", description: "Redo the copy from scratch" }
+    ],
+    multiSelect: false
+  }]
+})
+```
+
+STOP HERE. Do NOT proceed to Phase 4 until the user approves the copy.
+
+### Phase 4: Generate outputs
+
+You MUST call AskUserQuestion to choose format AND target platform:
+
+```
+AskUserQuestion({
+  questions: [
+    {
+      question: "Which output format do you prefer?",
+      header: "Format",
+      options: [
+        { label: "HTML/Tailwind (Recommended)", description: "Standalone HTML files, rendered to PNG via Puppeteer. No Remotion setup needed — faster to iterate." },
+        { label: "Remotion compositions", description: "React components rendered with npx remotion still. Reuses existing appshot-video project." },
+        { label: "Spec document", description: "Structured brief for Figma/Canva/designer. No code output." }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "Which store are these screenshots for?",
+      header: "Platform",
+      options: [
+        { label: "iOS App Store", description: "iPhone 6.9\": 1320x2868 (required). 6.7\": 1290x2796, 6.5\": 1242x2688 (optional)." },
+        { label: "Google Play", description: "Phone: 1080x1920 (recommended). Tablet 7\": 1200x1920, 10\": 1600x2560." },
+        { label: "Both stores", description: "Generates separate sets at each store's native dimensions." }
+      ],
+      multiSelect: false
+    }
+  ]
+})
+```
+
+**Phone screen content:** Build all device screen content as HTML/CSS mock-ups from the extracted context — screen layouts, brand colors, realistic sample data. Use the extracted `screens`, `features`, `navigation`, `uiPatterns`, `brand` colors, and `coreAction` from `.appshot-context.json` to build realistic-looking app UI.
+
+**If screenshots were provided:** The `visualSpec` from the screenshot analysis is the primary style reference. Before writing any mock HTML/CSS for a screen, check if a screenshot exists for that screen (or a similar one). Use the exact colors, border radii, spacing, component shapes, and typography from the visual spec — not generic values. If the spec says the background is `#0A1628` and cards are `#1A2940` with `1px #2A3A50` border, use those exact values. For screens without a matching screenshot, use the visual spec from the most similar screenshot to maintain consistent styling.
+
+**If no screenshots:** Match the app's visual design language from `uiPatterns` — border radius, button style, card style, typography weight, icon library, and spacing. Generic-looking mock UI that doesn't match the real app undermines credibility.
+
+For screens that have a direct screenshot match, prefer using the screenshot image directly (`<img>` tag) with text overlay rather than building mock HTML — this gives the highest fidelity.
+
+**App Store Preview target:** The mock screen fills the entire screenshot canvas edge-to-edge. Include status bar, navigation bar, tab bar, and home indicator. Headline and subtitle text overlay on top of the app screen with a semi-transparent background for readability. No device frames.
+
+**Marketing target:** The mock screen goes inside a device frame (HTML/CSS phone mockup or Remotion PhoneFrame). Headline and subtitle text appear above/below/beside the device frame.
+
+**Screenshot dimensions — use EXACT values or the store will reject uploads:**
+
+iOS App Store:
+| Device | Dimensions (portrait) | Required |
+|--------|----------------------|----------|
+| iPhone 6.9" | 1320x2868 | Yes (mandatory primary) |
+| iPhone 6.7" | 1290x2796 | Optional (Apple scales from 6.9") |
+| iPhone 6.5" | 1242x2688 | Optional (legacy) |
+| iPad 13" | 2064x2752 | Required if app supports iPad |
+
+Google Play:
+| Device | Dimensions (portrait) | Notes |
+|--------|----------------------|-------|
+| Phone | 1080x1920 | Recommended standard |
+| 7" Tablet | 1200x1920 | If app targets 7" tablets |
+| 10" Tablet | 1600x2560 | If app targets 10" tablets |
+
+Off-by-one pixel causes App Store rejection. When the user picks "iOS App Store", default to **1320x2868** (iPhone 6.9"). When the user picks "Google Play", default to **1080x1920**.
+
+**Remotion compositions** — rendered with `npx remotion still`:
+```bash
+npx remotion still CompositionId --frame 0 --image-format png --output out/screenshot-1.png
+```
+
+**HTML/Tailwind** — rendered with Puppeteer or Playwright:
+```bash
+# iOS App Store (iPhone 6.9")
+npx playwright screenshot screenshot-1.html screenshot-1.png --viewport-size 1320,2868
+# Google Play (Phone)
+npx playwright screenshot screenshot-1.html screenshot-1.png --viewport-size 1080,1920
+```
+
+**Spec document** — Structured brief for Figma, Canva, or a designer. Numbered list with all creative decisions explicit.
+
+Produce the chosen format with all creative decisions baked in. No placeholders.
+
+**Screenshots are reference material, not content.** Never embed user-provided screenshots as `<img>` tags in the output. Screenshots inform the `visualSpec` — the mock HTML/CSS must match the visual spec's exact colors, shapes, spacing, and typography, but the UI is always built as HTML/CSS (not an embedded image). This ensures the screenshot dimensions match the store requirements exactly and text renders crisply at any size.
+
+### Phase 5: Review & iterate
+
+Walk through the set:
+- Does screenshot 1 sell the app on its own?
+- Do the headlines tell a story when read in sequence?
+- Is every screenshot showing real app functionality?
+- Is the layout consistent across the set?
+
+### Quick mode
+
+If `$ARGUMENTS` contains "quick": compress phases 2-3 into inference. Make all creative decisions autonomously. Present the complete spec for approval, then generate. Still ask for platform/format in Phase 4.
+
+## Layout principles
+
+### App Store Preview target
+
+**Full-bleed screen** — App UI fills the entire canvas. The screenshot IS the app screen with navigation chrome.
+
+**Text placement** — Headlines and subtitles overlay on top of the app screen. Use a semi-transparent pill or banner background (e.g., `rgba(0,0,0,0.6)` or `rgba(255,255,255,0.85)`) for readability. Position at top or bottom third of the screen, avoiding the navigation chrome areas.
+
+**Background** — The app's own background IS the screenshot background. No separate background layer.
+
+**Consistency** — Same text overlay style, position, and size across all screenshots. Navigation chrome in every screen. Vary the app screen content, not the overlay structure.
+
+### Marketing target
+
+**Device frame** — Centered or offset, always showing real app UI. Large enough for screen content to be legible at store listing size. Consistent positioning across the set.
+
+**Text placement** — Headlines above or below the device frame. Never overlay text on the device screen. Consistent position across screenshots. Sufficient contrast.
+
+**Background** — Solid brand color or subtle gradient. Never busy patterns. Can shift per screenshot within the brand palette.
+
+**Consistency** — Same layout structure, font sizes, weights, and device placement across all screenshots. Vary background color and content, not structure.
+
+## Supporting resources
+
+- Primitives, dimensions, store requirements: [appshot-core SKILL.md](../appshot-core/SKILL.md)
+- Copy principles: [copy-principles.md](../shared/copy-principles.md)
+
+## Tips
+
+- Screenshot 1 does 80% of the work — spend 80% of your effort there.
+- Show the app in a realistic, populated state. Empty screens don't sell.
+- Use real or realistic data in device screens. "John's Workout" beats "Sample Item 1."
+- Test readability at store listing size — headlines that need zooming to read are too small.
+- Dark mode screenshots can stand out in a sea of white backgrounds. Consider offering both.
+- iOS and Android sets can share the same creative strategy but must use different device dimensions.

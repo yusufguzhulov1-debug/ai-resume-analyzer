@@ -1,0 +1,57 @@
+# <App name> — reel design spec (<language>, <format>, variant <x>)
+
+Write this file BEFORE any copy. Every line cites where it came from.
+
+## Angle
+- Hook / angle for this variant (see references/storyboard.md):
+- Who it is for:
+- The one feeling to leave:
+
+## Sources
+- Website: <url> (fetched <date>)
+- App Store: <id>, storefront <country> (store_assets.py metadata.json)
+- Google Play: <package> (labels: contains ads? in-app purchases?)
+- App strings in <language>: <repo path at origin/<branch>> (read-only)
+
+## Colors
+Site (CSS vars):
+- ...
+App (sample_colors.py on the store screenshots, relative coords):
+- screen bg, card, chip, primary button, text ...
+
+## Typography
+- Font the app uses, and the font file in assets/fonts/ (add an @font-face in src.html.tmpl).
+
+## Copy rules
+- Allowed claims, each with its source:
+  - "<claim>" — <site / store / app string>
+- Forbidden for this app (from the listings, your memory notes, or the user):
+  - e.g. never "no ads" if the Play listing says "Contains ads"
+  - e.g. no ratings, reviews, download counts, % or money figures
+- AI features are framed as help, never as guaranteed.
+- The app name is always written as: <exact spelling>
+- AI-generated label text in this language: <e.g. "AI-generated">
+
+## Music
+- Source: ACE-Step 1.5 / MusicGen / the user's own track (copy its bgm_user.source.txt here).
+- Prompt, chosen seed, tempo (--bpm), drop bar, synthetic lift yes/no (music_rank.py table).
+- The licence note of that source was shown to the user.
+
+## Reference
+Optional. Fill it only when the user gives a reference video or image for the look. Delete the
+section when there is none. A reference is for the craft, never for the content.
+- Reference: <file or link the user gave> (what it is, who made it)
+- Palette: a colour per role, sampled with `sample_colors.py <image> <points.json>` on a frame of the
+  reference (points.json maps a name to `[x, y]` in 0..1). Write a value you judged by eye as "estimated".
+- Typography: weight, case, size against the frame, how tight the lines are.
+- Composition: where the subject sits, how much empty space, what is cropped.
+- Pacing: how many seconds between changes, and where the changes land.
+- Motion: which motion class each move belongs to (`references/motion.md`).
+- Texture: grain, glow, shadow, blur, or none.
+- Do not copy: the logo, the characters, the text, the music, any claim and any product screen of the reference.
+
+## What NOT to do
+- No invented stats, ratings, people, testimonials or quotes.
+- No linear full-screen gradients (banding): radial only.
+- No pasted raw screenshots: rebuild the UI as HTML.
+- Never remove the AI-generated label.

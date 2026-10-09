@@ -1,0 +1,84 @@
+# Fonts and icon adapters
+
+`slopcamera` deliberately ships no commercial font and no large icon set. Its
+one built-in icon library, icon.place, is described below.
+
+## Custom font
+
+Create `slopcamera.config.ts` beside the source:
+
+```ts
+import type { DiagramConfig } from "@hraness/slopcamera"
+
+export default {
+  font: {
+    family: "Your Font",
+    monoFamily: "Your Mono, ui-monospace, monospace",
+    files: [
+      {
+        path: "./fonts/YourFont-Regular.ttf",
+        weight: 400,
+        embed: false,
+      },
+      {
+        path: "./fonts/YourFont-Semibold.ttf",
+        weight: 600,
+        embed: false,
+      },
+    ],
+  },
+} satisfies DiagramConfig
+```
+
+The PNG renderer reads those local files. With `embed: false`, SVG output names
+the family but does not copy font bytes; serve the font through the website or
+fall back through CSS. Set `embed: true` only when the font license permits
+redistribution and self-contained SVG is worth the added file size.
+
+`monoFamily` names a system or site-provided CSS fallback stack for source
+fields that use `"fontFamily": "mono"`. Font files in this config belong to
+the primary `family`; Slopcamera does not embed separate mono-family files. The
+editable `.tldr` export maps the two source roles to tldraw's `sans` and `mono`
+families while the SVG and PNG adapter owns the configured typography.
+
+Do not commit a commercial font merely because it exists on the local machine.
+
+## Custom icon
+
+An icon definition has a view box and SVG body:
+
+```ts
+import type { DiagramConfig } from "@hraness/slopcamera"
+
+export default {
+  icons: {
+    inbox: {
+      viewBox: "0 0 24 24",
+      body:
+        '<path d="M4 5h16v14H4zM4 14h4l2 2h4l2-2h4" ' +
+        'fill="none" stroke="currentColor" stroke-width="1.5" ' +
+        'stroke-linecap="round" stroke-linejoin="round"/>',
+    },
+  },
+} satisfies DiagramConfig
+```
+
+Reference it with `"icon": "inbox"` on a rectangle or ellipse. The renderer
+uses `currentColor`, so one definition works in both themes. The `.tldr`
+adapter embeds the icon as an SVG image asset; the card, icon, and label remain
+separate movable tldraw shapes.
+
+To use a third-party icon package, write a small local adapter that converts the
+package's data into `{ viewBox, body }`. Keep that package in the consuming
+repository rather than adding it to `slopcamera`. Preserve the icon package's
+license and attribution requirements.
+
+icon.place is the one icon library built into `slopcamera`. It draws its own
+icon scenes and construction programs to standalone SVG through
+`slopcamera image icon compose|render`; see [icon scenes](icon-place.md). It
+does not add icons to the diagram `icons` table, so diagram icons from any
+other package still go through a local adapter.
+
+Icon bodies may contain ordinary SVG geometry such as `path`, `circle`, `rect`,
+`line`, `polyline`, and `polygon`. Scripts, event handlers, `foreignObject`, and
+embedded web content are rejected.

@@ -1,0 +1,105 @@
+{
+  "id": "screen-capture",
+  "title": "Screen capture",
+  "description": "Getting real app footage into a video safely: what to ask the user to record, probing a file, the seek-safe master (VP9 WebM at the project fps with a keyframe every 15 frames, because the renderer seeks every frame and the CLI cannot decode H.264), verified ffmpeg recipes for frame-accurate trims, 9:16 and 4:5 crops that output 1080x1920 and 1080x1350, speeding up a dead stretch, blurring private data and pulling stills, then full-bleed versus a device frame built in the scene, and rebuilding a UI when there is no recording. Load it whenever a video shows software working.",
+  "summary": "Real app footage, render-safe: what to record, the all-keyframe constant-rate master, 9:16 and 4:5 crops, scrubbing, device frames, rebuilds.",
+  "kind": "technique",
+  "category": "Craft",
+  "tags": [
+    "screen-recording",
+    "ffmpeg",
+    "device-frame",
+    "product-demo",
+    "ui",
+    "seek-safe"
+  ],
+  "aspects": [
+    "9:16",
+    "4:5",
+    "1:1",
+    "16:9"
+  ],
+  "duration": {
+    "minSeconds": 3,
+    "maxSeconds": 180
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Probe, conform to VP9 at the project fps with dense keyframes, trim, crop, speed up, scrub."
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "Copies the user's recording into assets/ so nothing is hot-linked."
+    },
+    {
+      "kind": "capability",
+      "id": "generate-image",
+      "why": "Placeholder content inside a rebuilt UI."
+    },
+    {
+      "kind": "capability",
+      "id": "web-research",
+      "why": "The real product's fonts, colours and logo for a rebuilt UI."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "Freezes and the legibility of interface text are judged on rendered frames."
+    }
+  ],
+  "models": [
+    {
+      "purpose": "image",
+      "model": "Gemini 2.5 Flash Image",
+      "via": "generate-image",
+      "note": "Avatars and thumbnails inside a rebuilt UI only."
+    }
+  ],
+  "triggers": [
+    "turn my screen recording into footage for the video",
+    "crop this desktop capture to 1080x1920",
+    "how should I record a good product demo",
+    "build a phone frame around this clip",
+    "no recording, rebuild the app's UI in the video",
+    "speed up the boring part of this capture",
+    "the recording stutters or freezes in the render"
+  ],
+  "templates": [
+    "prequel-launch",
+    "notion-launch-video"
+  ],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.0",
+  "icon": "🎬"
+}

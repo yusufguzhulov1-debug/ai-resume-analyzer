@@ -1,0 +1,175 @@
+{
+  "id": "ugc-green-screen",
+  "title": "UGC green screen",
+  "description": "The commentary ad: a presenter cut out over a full-bleed source (a competitor's pricing page, a review, a thread, a search result, a chart) reacting line by line, with drawn marks turning the reaction into an argument. Covers what makes a source worth reacting to, the layout inside the safe zone, direction defaults, beat sheets with frame budgets at 15, 30 and 45 seconds, hook options, mark timings to the word, the three presenter routes (the user's clip, a keyed generated still, or presenter-free with a cursor), the sound plan, and building it on Three.js.",
+  "summary": "Commentary ad: a presenter or cursor reacting to a readable source, one mark per claim on the word, the turn to your page.",
+  "kind": "style",
+  "category": "UGC ads",
+  "tags": [
+    "ugc",
+    "green-screen",
+    "commentary",
+    "reaction",
+    "annotation"
+  ],
+  "aspects": [
+    "9:16",
+    "4:5"
+  ],
+  "duration": {
+    "minSeconds": 10,
+    "maxSeconds": 45
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-craft"
+    },
+    {
+      "kind": "skill",
+      "id": "ad-qa"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-ad-foundations"
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "ai-presenter"
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "Bring the screenshot or page the presenter is reacting to into assets/."
+    },
+    {
+      "kind": "capability",
+      "id": "generate-image",
+      "why": "Stand in for a source the user cannot supply, and for the presenter still."
+    },
+    {
+      "kind": "capability",
+      "id": "voiceover",
+      "why": "The commentary is the whole ad; it has to sound unproduced."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "Legibility of the source behind the cutout is a frame check."
+    },
+    {
+      "kind": "skill",
+      "id": "three-look",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-transitions",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Trims and keys a presenter clip or still into a cutout with alpha."
+    },
+    {
+      "kind": "capability",
+      "id": "sfx",
+      "why": "A pop on each mark's landing frame and a tonal note on the turn."
+    }
+  ],
+  "route": {
+    "deliverable": "A 10–45 second vertical ad reacting to a page, post or screenshot, with marks landing on the words",
+    "inputs": [
+      "url",
+      "brief"
+    ],
+    "priority": 50,
+    "askFirst": [
+      "What page or post is the presenter reacting to?",
+      "Is there a real presenter clip, or should one be generated?"
+    ]
+  },
+  "models": [
+    {
+      "purpose": "lipsync",
+      "model": "Sync 2 Pro",
+      "via": "mcp:fal",
+      "note": "Drives a keyed generated portrait in takes of four seconds or less."
+    },
+    {
+      "purpose": "voice",
+      "model": "ElevenLabs v3",
+      "via": "voiceover",
+      "note": "Conversational, mid-pace, no announcer lift."
+    },
+    {
+      "purpose": "image",
+      "model": "Gemini 2.5 Flash Image",
+      "via": "generate-image",
+      "note": "Presenter on flat #00B140 green for keying, or a generic stand-in source."
+    },
+    {
+      "purpose": "sfx",
+      "model": "ElevenLabs SFX",
+      "via": "sfx",
+      "note": "Soft pop on each mark, one tonal note on the turn."
+    }
+  ],
+  "triggers": [
+    "react to this screenshot in an ad",
+    "roast a competitor's pricing page in a video",
+    "commentary ad over a tweet or thread",
+    "green screen style video over an article",
+    "presenter pointing at a review in a TikTok ad",
+    "circle the price and react to it"
+  ],
+  "templates": [],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.2",
+  "icon": "🟩"
+}

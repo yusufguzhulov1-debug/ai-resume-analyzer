@@ -1,0 +1,115 @@
+{
+  "_template": "Biography, 6 scenes, about 60s, landscape. Copy to public/<slug>/story.json, change slug and compositionId, rewrite narration and prompts, then: npm run generate -- --slug <slug>",
+  "slug": "replace-me",
+  "compositionId": "ReplaceMe",
+  "orientation": "landscape",
+  "fps": 30,
+  "title": {
+    "eyebrow": "THE SHORT VERSION",
+    "headline": "Small start to big number",
+    "subline": "The journey of a subject"
+  },
+  "voice": {
+    "speaker": "shubh",
+    "pace": 1.05,
+    "temperature": 0.6,
+    "languageCode": "en-IN"
+  },
+  "style": {
+    "artPrompt": "flat vector cartoon illustration, bold clean black outlines, vibrant saturated colours, expressive caricature faces, warm Indian skin tones, simple graphic shapes, subtle cel shading, modern editorial cartoon poster style, no text, no lettering, no numbers, no watermark, no signature",
+    "accent": "#FFD166",
+    "background": "#04060A",
+    "displayFont": "BricolageGrotesque",
+    "textFont": "Poppins"
+  },
+  "references": {
+    "portrait": "../photo/subject-portrait.jpg"
+  },
+  "scenes": [
+    {
+      "id": 0,
+      "narration": "HOOK. State the end state and the starting point in one breath. Twenty four to thirty two words. Spell every number as words, never digits.",
+      "stat": { "value": "Rs 5,000", "label": "STARTING CAPITAL, 1985" },
+      "images": [
+        {
+          "id": 1,
+          "reference": "portrait",
+          "prompt": "Keep the face, spectacles and features clearly recognisable, but younger. Place the subject in the setting where the story begins, wide shot, warm golden light."
+        },
+        { "id": 2, "prompt": "An object that stands for the starting point, close up on a wooden table, single warm desk lamp, dramatic shadows." }
+      ]
+    },
+    {
+      "id": 1,
+      "narration": "ORIGIN. The person or the moment that started it. Keep one idea per scene and let the images carry the setting.",
+      "stat": null,
+      "images": [
+        { "id": 3, "prompt": "The formative scene: two people in conversation in a period-accurate room, nostalgic light, no text anywhere." },
+        { "id": 4, "prompt": "A tight detail from that same room that hints at the subject matter, shallow depth of field." }
+      ]
+    },
+    {
+      "id": 2,
+      "narration": "FIRST MOVE. The first real bet and what it returned. Name the year and the number, spelled as words.",
+      "stat": { "value": "Rs 20-25 lakh", "label": "EARNED BY 1989" },
+      "images": [
+        {
+          "id": 5,
+          "reference": "portrait",
+          "prompt": "Keep the face and features recognisable. The subject at work in the period setting, leaning back with a knowing smile, cluttered desk, cool screen glow."
+        },
+        { "id": 6, "prompt": "The industry or asset behind that first bet, wide establishing shot, dusk light." }
+      ]
+    },
+    {
+      "id": 3,
+      "narration": "SETBACK OR CONTRARIAN TURN. What went against the subject, or the unpopular position they took. No stat card here, let it breathe.",
+      "stat": null,
+      "images": [
+        { "id": 7, "prompt": "The place or industry at its low point, moody palette, overcast light." },
+        {
+          "id": 8,
+          "reference": "portrait",
+          "prompt": "Keep the face and features recognisable. Arms folded, standing against a symbol of the downturn, dramatic low angle, moody red and grey palette."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "narration": "THE BIG WIN. The trade, product or decision that compounded, with the multiple stated in words.",
+      "stat": { "value": "250x", "label": "THE POSITION, FROM 2004" },
+      "images": [
+        {
+          "id": 9,
+          "reference": "portrait",
+          "prompt": "Keep the face and features recognisable. Behind a desk in a bright modern office, city skyline through glass, confident relaxed posture."
+        },
+        { "id": 10, "prompt": "The business that produced the win, industrial or retail scale, a giant stylised arrow soaring over it into a clear sky." }
+      ]
+    },
+    {
+      "id": 5,
+      "narration": "WHERE IT LANDED. The final figure with its source and date, then one line that closes the loop opened by the hook.",
+      "stat": { "value": "Rs 34,387 cr", "label": "NET WORTH, FORBES, 3 JULY 2021" },
+      "images": [
+        {
+          "id": 11,
+          "reference": "portrait",
+          "prompt": "Keep the face and features clearly recognisable. Chest up hero portrait, broad warm smile, arms crossed, huge glowing green upward chart behind, celebratory golden light."
+        },
+        {
+          "id": 12,
+          "reference": "portrait",
+          "prompt": "Keep the face and features clearly recognisable. Wide shot, one hand raised in triumph, standing on a giant rising bar chart of gold coins, city skyline at sunrise."
+        }
+      ]
+    }
+  ],
+  "outro": {
+    "headline": "Three words that land",
+    "subline": "NAME, YEARS",
+    "imageId": 12,
+    "durationInFrames": 92
+  },
+  "music": null
+}

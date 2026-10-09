@@ -1,0 +1,153 @@
+{
+  "id": "ugc-unboxing",
+  "title": "UGC unboxing",
+  "description": "The first-impression ad: a box, hands in frame, the product revealed one layer per beat, with foley carrying the retention. Covers direction defaults, beat sheets with frame budgets at 15, 30 and 45 seconds, hook options, the one-layer-per-beat rule, why hands beat a face, scale and packaging as the subject, a foley plan with levels and cuts on transients, the software version (an unboxing is the onboarding, and the script says so), and building the reveal from matched stills and camera moves on Three.js.",
+  "summary": "Hands, a box, one layer per beat, a breath before the reveal, foley cut on transients. Software unboxes as its onboarding.",
+  "kind": "style",
+  "category": "UGC ads",
+  "tags": [
+    "ugc",
+    "unboxing",
+    "reveal",
+    "foley",
+    "first-impression"
+  ],
+  "aspects": [
+    "9:16",
+    "4:5"
+  ],
+  "duration": {
+    "minSeconds": 8,
+    "maxSeconds": 45
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-craft"
+    },
+    {
+      "kind": "skill",
+      "id": "ad-qa"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-ad-foundations"
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "The user's product photography is always better than a generated box."
+    },
+    {
+      "kind": "capability",
+      "id": "generate-image",
+      "why": "Fill the reveal stages the user has no photo for."
+    },
+    {
+      "kind": "capability",
+      "id": "sfx",
+      "why": "Tape, cardboard, tissue and the set-down are the retention device."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "Every stage of the reveal is checked as a frame."
+    },
+    {
+      "kind": "skill",
+      "id": "three-look",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-transitions",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    }
+  ],
+  "route": {
+    "deliverable": "An 8–45 second vertical ad that reveals a product one layer per beat, hands in frame",
+    "inputs": [
+      "brief"
+    ],
+    "priority": 50,
+    "askFirst": [
+      "Do you have product photos or footage?",
+      "What is the reveal moment — the thing people should see last?"
+    ]
+  },
+  "models": [
+    {
+      "purpose": "image",
+      "model": "Gemini 2.5 Flash Image",
+      "via": "generate-image",
+      "note": "Three matched stages: same surface, light and hand in every prompt."
+    },
+    {
+      "purpose": "video",
+      "model": "Veo 3.1",
+      "via": "mcp:fal",
+      "note": "Two-to-four-second handheld clips of the seal or the lift, if connected."
+    },
+    {
+      "purpose": "sfx",
+      "model": "ElevenLabs SFX",
+      "via": "sfx",
+      "note": "Tape tear, cardboard slide, tissue crinkle, a soft set-down."
+    }
+  ],
+  "triggers": [
+    "unboxing video for my product",
+    "first impressions ad with hands opening the box",
+    "what's in the box reveal for TikTok",
+    "packaging reveal video with satisfying sounds",
+    "make our onboarding feel like an unboxing"
+  ],
+  "templates": [],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.1",
+  "icon": "📦"
+}

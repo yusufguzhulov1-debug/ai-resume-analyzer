@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ljq.local/schemas/validation.schema.json",
+  "title": "LJQ B-roll fidelity validation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "status", "correctionPass", "source", "render", "checks", "metrics", "issues", "knownDifferences", "artifacts"],
+  "properties": {
+    "schemaVersion": {"enum": ["1.1", "1.2"]},
+    "caseId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "status": {"enum": ["pending", "passed", "needs_revision", "blocked"]},
+    "correctionPass": {"type": "integer", "minimum": 0, "maximum": 2},
+    "source": {"$ref": "#/$defs/mediaSummary"},
+    "render": {"$ref": "#/$defs/mediaSummary"},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "evidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["pass", "fail", "not_applicable"]},
+          "evidence": {"type": "string"}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {"type": ["number", "integer", "string", "boolean", "null"]}
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "owner", "severity", "observation", "evidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "type": {"enum": ["source", "scope", "geometry", "asset", "reusability", "appearance", "timing", "motion", "continuity", "transition", "render", "audio"]},
+          "targetId": {"type": ["string", "null"]},
+          "owner": {"enum": ["preflight", "layout", "motion", "implementation", "qa"]},
+          "severity": {"enum": ["high", "medium", "low"]},
+          "observation": {"type": "string", "minLength": 1},
+          "evidence": {"type": "string"}
+        }
+      }
+    },
+    "knownDifferences": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "artifacts": {"type": "object", "additionalProperties": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "mediaSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "fps", "durationInFrames", "hasAudio"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "fps": {"type": "number", "exclusiveMinimum": 0},
+        "durationInFrames": {"type": "integer", "minimum": 1},
+        "hasAudio": {"type": "boolean"}
+      }
+    }
+  }
+}

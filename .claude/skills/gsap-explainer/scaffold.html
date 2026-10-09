@@ -1,0 +1,739 @@
+<!--
+  HOW COMPOUND INTEREST SNOWBALLS — GSAP-powered animated explainer (visual track)
+  A runnable 5-scene worked example: every choreography pattern in context.
+  Silent by design: screen-record + lay a voiceover (the sr-only transcript = the read).
+  GSAP is stripped from this repo copy — run `python3 inline-gsap.py scaffold.html`
+  once to fetch + inline GSAP 3.13 (core + the free plugin suite) at the GSAP_INLINE
+  HTML-comment marker below, then open the file. Per-scene timelines drive:
+  coin drop physics, the growth-collision proof, arrow draws, the pour.
+  QA: serve the folder (python3 -m http.server 8801) · window.__xpl + __xpl.tl() for GSAP seeks
+-->
+<meta charset="utf-8">
+<title>GSAP explainer — scaffold</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --cream:#fdf8ee; --ink:#3d4e6c; --stripe:#5e6c88; --honey:#f5b95f;
+    --body-honey:#ffe3a8; --accent:#fbe9c9; --paper:#fffdf6; --parchment:#f7efe0;
+    --brown:#7a6a52; --line:#e8dfd0; --gold:#a9761f; --blush:#f5a9a0;
+    --emer:#0f9d6b; --rose:#d4483d; --violet:#7c5cbf;
+    --font-serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+    --font-sans:"Nunito",ui-rounded,"Segoe UI",system-ui,-apple-system,sans-serif;
+    --font-scribble:"Caveat","Segoe Print","Bradley Hand",cursive;
+    --font-mono:"SF Mono",ui-monospace,"Cascadia Code","Roboto Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{background:var(--cream);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;padding:40px 16px;line-height:1.6}
+  .demo-wrap{max-width:960px;margin:0 auto}
+  .demo-head{text-align:center;margin-bottom:22px}
+  .demo-head .eyebrow{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.24em;color:var(--brown)}
+  .demo-head h2{font-family:var(--font-serif);font-weight:700;font-size:clamp(24px,3.2vw,34px);margin:10px 0 4px;line-height:1.12;text-wrap:balance}
+  .demo-head p.sub{color:var(--stripe);font-size:14px;font-weight:700}
+
+  .xpl-frame{background:var(--paper);border:2px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 0 var(--ink);overflow:hidden}
+  .xpl-stagewrap{position:relative;width:100%;overflow:hidden;cursor:pointer;user-select:none;background:var(--cream)}
+  .xpl-stage{position:absolute;top:0;left:0;width:800px;height:500px;transform-origin:top left}
+  .xpl-scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+  .xpl-scene.is-active{opacity:1;visibility:visible;animation:xplSceneIn .5s ease both,xplLive 26s ease-in-out both}
+  @keyframes xplSceneIn{from{opacity:0}to{opacity:1}}
+  @keyframes xplLive{from{transform:scale(1)}to{transform:scale(1.032)}}
+
+  .xpl-scene .fu,.xpl-scene .pp,.xpl-scene .fi{opacity:0}
+  .xpl-scene.is-active .fu{animation:xplFadeUp .6s cubic-bezier(.22,.9,.32,1) both}
+  .xpl-scene.is-active .fi{animation:xplFadeIn .55s cubic-bezier(0,0,.2,1) both}
+  .xpl-scene.is-active .pp{animation:xplPop .55s cubic-bezier(.34,1.56,.64,1) both}
+  @keyframes xplFadeUp{from{opacity:0;translate:0 18px}to{opacity:1;translate:0 0}}
+  @keyframes xplFadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes xplPop{0%{opacity:0;scale:.55}100%{opacity:1;scale:1}}
+
+  .xpl-h{font-family:var(--font-serif);font-weight:700;color:var(--ink);line-height:1.1}
+  .xpl-em{font-family:var(--font-scribble);font-weight:700;color:var(--gold);display:inline-block;animation:xemSway 4.2s ease-in-out infinite}
+  @keyframes xemSway{0%,100%{transform:rotate(-.8deg)}50%{transform:rotate(1deg)}}
+  .xpl-scene .center-col{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 60px}
+  .kicker{font-family:var(--font-sans);font-weight:900;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--brown)}
+
+  .xchip{display:inline-block;font-family:var(--font-sans);font-weight:900;padding:11px 20px;border:2px solid var(--ink);border-radius:13px;background:var(--paper);box-shadow:3px 3px 0 0 var(--ink);font-size:23px;color:var(--ink);white-space:nowrap;line-height:1.05;animation:xchipFloat 5s ease-in-out infinite}
+  @keyframes xchipFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(-.5deg)}}
+  .xchip.suf{background:var(--honey);animation-duration:5.9s;animation-delay:-.8s}
+  .xchip.nec{background:var(--nec,#3d4e6c);background:var(--ink);color:var(--paper);animation-duration:4.6s;animation-delay:-2.2s}
+  .xchip.good{background:var(--emer);color:#fff;border-color:#0a5f41;animation-duration:5.4s;animation-delay:-1.4s}
+  .xchip.bad{background:var(--rose);color:#fff;border-color:#7a201a;animation-duration:4.3s;animation-delay:-.5s}
+  .xchip.violet{background:var(--violet);color:#fff;border-color:#4b3487;animation-duration:6.2s;animation-delay:-2.9s}
+  .xchip.sm{font-size:16px;padding:7px 14px;box-shadow:2px 2px 0 0 var(--ink);border-radius:10px;animation-duration:4.1s;animation-delay:-1.7s}
+  .xchip.lg{font-size:30px;padding:15px 26px;box-shadow:5px 5px 0 0 var(--ink);animation-duration:6.5s;animation-delay:-.3s}
+  .l3{position:absolute;left:0;right:0;bottom:26px;text-align:center;pointer-events:none}
+  .l3 span{display:inline-block;font-family:var(--font-mono);font-weight:800;font-size:20px;letter-spacing:.01em;color:var(--paper);background:rgba(61,78,108,.94);padding:9px 20px;border-radius:11px;box-shadow:3px 3px 0 0 rgba(24,32,48,.35)}
+  .stamp{font-family:var(--font-scribble);font-weight:700;font-size:44px;line-height:1}
+  .stamp.ok{color:var(--emer)} .stamp.no{color:var(--rose)}
+  .arrow-row{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:22px}
+
+  /* scene backgrounds are TRANSPARENT — the world lives in the 3-layer env below */
+  .s-black,.s-cold,.s-warm,.s-paper,.s-cta{background:transparent}
+  .on-dark{color:#f4f7fc}
+  .on-dark .kicker{color:#b9c4dc}
+  .xpl-scene::after{content:"";position:absolute;inset:-15%;pointer-events:none;z-index:-1;opacity:0}
+  .s-warm::after,.s-cta::after{opacity:1;background:radial-gradient(42% 34% at 28% 72%,rgba(245,185,95,.22),transparent 70%);animation:xGlowDrift 13s ease-in-out infinite alternate}
+  .s-cold::after{opacity:1;background:radial-gradient(40% 32% at 70% 30%,rgba(94,108,136,.14),transparent 70%);animation:xGlowDrift 16s ease-in-out infinite alternate-reverse}
+  .s-black::after{opacity:1;background:radial-gradient(45% 36% at 60% 40%,rgba(245,185,95,.10),transparent 70%);animation:xGlowDrift 15s ease-in-out infinite alternate}
+  @keyframes xGlowDrift{from{transform:translate(-4%,2%) scale(1)}to{transform:translate(6%,-5%) scale(1.08)}}
+
+  .xbob{animation:xHostBob 4.6s ease-in-out infinite}
+  @keyframes xHostBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(-1.1deg)}}
+  .heyes{transform-box:fill-box;transform-origin:center;animation:xHostBlink 5.4s infinite both}
+  @keyframes xHostBlink{0%,90%,100%{transform:scaleY(1)}93%{transform:scaleY(.08)}95%{transform:scaleY(.08)}97%{transform:scaleY(1)}}
+  .hwl,.hwr{transform-box:fill-box;animation:xWing 1s ease-in-out infinite alternate}
+  .hwl{transform-origin:92% 88%}
+  .hwr{transform-origin:8% 88%;animation-name:xWingR;animation-delay:-.5s}
+  @keyframes xWing{from{transform:rotate(0deg)}to{transform:rotate(-7deg)}}
+  @keyframes xWingR{from{transform:rotate(0deg)}to{transform:rotate(7deg)}}
+
+  .hexbg{position:absolute;inset:0;width:100%;height:100%;opacity:.06;pointer-events:none}
+  .xpl-veil{position:absolute;inset:0;display:grid;place-items:center;background:rgba(61,78,108,.18);opacity:0;visibility:hidden;transition:opacity .2s ease}
+  .xpl-root.paused .xpl-veil{opacity:1;visibility:visible}
+  .xpl-veil .knob{width:66px;height:66px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);box-shadow:3px 3px 0 0 var(--ink);display:grid;place-items:center}
+  .xpl-poster{position:absolute;inset:0;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 50px}
+  .xpl-root.paused .xpl-stage *{animation-play-state:paused!important}
+
+  .xpl-chrome{display:flex;align-items:center;gap:14px;padding:12px 16px;border-top:2px solid var(--ink);background:var(--cream)}
+  .xpl-pbtn{width:44px;height:44px;flex:none;border-radius:50%;background:var(--honey);border:2px solid var(--ink);display:grid;place-items:center;cursor:pointer;transition:transform .15s ease}
+  .xpl-pbtn:hover{transform:translateY(-2px)}
+  .xpl-pbtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .xpl-nbtn{width:34px;height:34px;background:var(--paper)}
+  .xpl-progress{position:relative;flex:1;height:9px;border-radius:6px;background:rgba(61,78,108,.12);border:1px solid rgba(61,78,108,.16);overflow:hidden;cursor:pointer;transition:height .15s ease}
+  .xpl-progress:hover{height:14px}
+  .xpl-progress .fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--honey);pointer-events:none}
+  .xpl-ticks{position:absolute;inset:0;pointer-events:none}
+  .xpl-ticks i{position:absolute;top:0;bottom:0;width:1px;background:rgba(61,78,108,.28)}
+  .xpl-time{font-size:12px;font-weight:800;color:var(--brown);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  .xpl-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 28px;font-family:var(--font-sans);font-size:18px;font-weight:800;color:var(--ink);border-radius:15px;border:2px solid var(--ink);text-decoration:none;cursor:pointer;box-shadow:4px 4px 0 0 var(--ink);transition:transform .15s ease,box-shadow .15s ease}
+  .xpl-btn.honey{background:var(--honey)}
+  .xpl-btn:hover{transform:translateY(-3px);box-shadow:6px 6px 0 0 var(--ink)}
+  .xpl-btn:active{transform:translateY(0) scale(.98);box-shadow:none}
+  .xpl-btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .xpl-scene[data-scene="4"].is-active .xpl-btn.honey{animation:xplCtaNudge 1.7s ease-in-out 2.4s 2 both}
+  @keyframes xplCtaNudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+  .spark{position:absolute;font-size:24px;color:var(--gold);opacity:0;pointer-events:none;animation:xplTwinkle 2.6s ease-in-out infinite}
+  @keyframes xplTwinkle{0%,100%{opacity:0;transform:scale(.5) rotate(-8deg)}50%{opacity:.95;transform:scale(1.1) rotate(6deg)}}
+  .xpl-dust{position:absolute;inset:0;pointer-events:none}
+  .xpl-dust i{position:absolute;bottom:-16px;width:5px;height:5px;border-radius:2px;background:var(--honey);opacity:0;animation:xplDust 18s linear infinite}
+  @keyframes xplDust{0%{translate:0 0;opacity:0}10%{opacity:.34}90%{opacity:.2}100%{translate:16px -560px;opacity:0}}
+
+  /* GSAP-owned hero elements: visible base state; timelines set/reset them */
+  .g-hero{position:absolute}
+  /* honey drops: radial shading + specular, not flat dots */
+  .marble{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #8a6d1f;background:radial-gradient(circle at 32% 28%,#ffd98a 0%,#e0a63a 55%,#b57d17 100%);box-shadow:inset -2px -3px 4px rgba(122,84,10,.35),0 2px 3px rgba(61,78,108,.18)}
+  .pfx{position:absolute;width:9px;height:9px;border-radius:2px;pointer-events:none;will-change:transform;box-shadow:inset 1px 1px 1px rgba(255,255,255,.4),inset -1px -2px 2px rgba(0,0,0,.28)}
+  .qbar{position:absolute;height:56px;border-radius:12px;display:flex;align-items:center;padding:0 18px;font-family:var(--font-serif);font-weight:800;font-size:17px;box-shadow:3px 3px 0 0 rgba(0,0,0,.15);overflow:hidden}
+  .qbar::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,0) 46%);pointer-events:none}
+  /* the camera: vignette + a whisper of grain over everything */
+  .xpl-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(115% 88% at 50% 44%,transparent 58%,rgba(18,24,38,.17) 100%)}
+  .xpl-grain{position:absolute;inset:0;pointer-events:none;opacity:.05;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+  /* ═══ real 3-layer parallax environment ═══
+     far (sky/hills/stars) · mid (close hills, the hive) · near (blurred foreground, ABOVE content).
+     Each drifts at its own rate; runScene adds a per-cut camera dolly (far 6px / mid 14px / near 26px).
+     Scene backgrounds are transparent — the world lives here and cross-fades by stage[data-mood]. */
+  .env{position:absolute;inset:-4% -3%;pointer-events:none}
+  .env svg{width:100%;height:100%}
+  .envv{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
+  #envFar{animation:envFar 64s ease-in-out infinite alternate}
+  #envMid{animation:envMid 46s ease-in-out infinite alternate}
+  #envNear{animation:envNear 32s ease-in-out infinite alternate;filter:blur(2.2px)}
+  @keyframes envFar{from{translate:-6px 0}to{translate:6px 2px}}
+  @keyframes envMid{from{translate:10px 0}to{translate:-12px -3px}}
+  @keyframes envNear{from{translate:-16px 4px}to{translate:14px -5px}}
+  .xpl-stage[data-mood="warm"] #envFar .vwarm,.xpl-stage[data-mood="warm"] #envMid .vwarm{opacity:1}
+  .xpl-stage[data-mood="paper"] #envFar .vpaper,.xpl-stage[data-mood="paper"] #envMid .vpaper{opacity:1}
+  .xpl-stage[data-mood="cold"] #envFar .vcold,.xpl-stage[data-mood="cold"] #envMid .vcold{opacity:1}
+  .xpl-stage[data-mood="dark"] #envFar .vdark,.xpl-stage[data-mood="dark"] #envMid .vdark{opacity:1}
+  .xpl-stage[data-mood="dark"] #envNear .vdark{opacity:1}
+  .xpl-stage[data-mood="warm"] #envNear .vlight,.xpl-stage[data-mood="paper"] #envNear .vlight,.xpl-stage[data-mood="cold"] #envNear .vlight{opacity:.95}
+  /* scene-cut wipe: two skewed panels sweep the stage at every cut (Kurzgesagt-style) */
+  .xpl-wipe{position:absolute;inset:-8% 0;pointer-events:none;overflow:visible}
+  .xpl-wipe i{position:absolute;top:0;bottom:0;left:-45%;width:38%;transform:skewX(-14deg)}
+  .xpl-wipe .w1{background:var(--honey)}
+  .xpl-wipe .w2{background:var(--ink);opacity:.94}
+  /* cold-open chips glow like neon on the dark sky */
+  .xpl-scene[data-scene="0"] .xchip.violet{box-shadow:0 0 26px rgba(124,92,191,.55),0 0 60px rgba(124,92,191,.25),3px 3px 0 0 #4b3487}
+  /* ambient mini-bee swarm crossing the world now and then */
+  .xpl-swarm{position:absolute;inset:0;pointer-events:none}
+  .mb{position:absolute;left:0;top:0;opacity:0}
+  .mb .mwl,.mb .mwr{transform-box:fill-box;animation:xWing .18s ease-in-out infinite alternate}
+  .mb .mwl{transform-origin:90% 90%}
+  .mb .mwr{transform-origin:10% 90%;animation-name:xWingR;animation-delay:-.09s}
+  .mb1{animation:mbFly1 37s linear infinite;animation-delay:-9s}
+  .mb2{animation:mbFly2 46s linear infinite;animation-delay:-30s}
+  .mb3{animation:mbFly3 53s linear infinite;animation-delay:-18s}
+  @keyframes mbFly1{0%{translate:-50px 400px;opacity:0}5%{opacity:.55}45%{translate:400px 210px}95%{opacity:.45}100%{translate:860px 300px;opacity:0}}
+  @keyframes mbFly2{0%{translate:850px 140px;opacity:0;scale:-.8 .8}6%{opacity:.4}50%{translate:380px 340px;scale:-.8 .8}94%{opacity:.35}100%{translate:-60px 220px;opacity:0;scale:-.8 .8}}
+  @keyframes mbFly3{0%{translate:-40px 130px;opacity:0;scale:.65}7%{opacity:.35}55%{translate:460px 60px;scale:.65}93%{opacity:.3}100%{translate:850px 150px;opacity:0;scale:.65}}
+  /* proof bees: the two that wear BOTH badges */
+  .obee{position:absolute;width:34px;text-align:center}
+  .obee .ring{position:absolute;inset:-7px -4px;border:3px solid #7c5cd6;border-radius:50%;box-shadow:0 0 14px rgba(124,92,214,.65)}
+
+  .xpl-actor{position:absolute;left:0;top:0;width:96px;pointer-events:none;filter:drop-shadow(0 12px 9px rgba(61,78,108,.16));will-change:transform}
+  .xpl-actor svg > ellipse:first-of-type{display:none}
+  .xpl-actor .aarm{position:absolute;left:-16px;top:60px;width:38px;height:34px;transform-origin:30px 8px}
+
+  .xpl-static{display:none}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  @media (prefers-reduced-motion: reduce){
+    .xpl-root .xpl-frame{display:none}
+    .xpl-static{display:block}
+    .xbob,.heyes,.hwl,.hwr,.xchip,.xpl-em{animation:none!important}
+  }
+</style>
+
+<div class="demo-wrap">
+  <div class="demo-head">
+    <p class="eyebrow">Personal finance &middot; explainer</p>
+    <h2>How compound interest snowballs.</h2>
+    <p class="sub">The one idea that turns a little into a lot &middot; ~1:31 &middot; GSAP scaffold (5 worked-example scenes)</p>
+  </div>
+
+  <div class="xpl-root" id="xplRoot" role="region" aria-label="A short animated explainer, about ninety seconds">
+    <div class="xpl-frame">
+      <div class="xpl-stagewrap" id="xplStageWrap" aria-hidden="true">
+        <div class="xpl-stage" id="xplStage">
+
+          <!-- 3-layer parallax world: far / mid (below scenes) · near (above content) -->
+          <div class="env" id="envFar" aria-hidden="true">
+            <div class="envv vwarm"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <defs><linearGradient id="efW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdf7e9"/><stop offset=".6" stop-color="#fbf0d8"/><stop offset="1" stop-color="#f6e5bf"/></linearGradient></defs>
+              <rect width="800" height="500" fill="url(#efW)"/>
+              <circle cx="632" cy="118" r="150" fill="#f5b95f" opacity=".11"/><circle cx="632" cy="118" r="82" fill="#f5b95f" opacity=".12"/>
+              <path d="M0 428 Q 200 382 420 422 T 800 406 L800 500 L0 500 Z" fill="#f0dfb4" opacity=".7"/>
+              <g stroke="#a9761f" stroke-opacity=".08" stroke-width="3" fill="none"><path d="M600 84 l24 -14 24 14 0 28 -24 14 -24 -14 Z"/><path d="M82 118 l18 -10 18 10 0 21 -18 10 -18 -10 Z"/></g>
+            </svg></div>
+            <div class="envv vpaper"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <defs><linearGradient id="efP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf6"/><stop offset=".68" stop-color="#fdf5e3"/><stop offset="1" stop-color="#f8edd5"/></linearGradient></defs>
+              <rect width="800" height="500" fill="url(#efP)"/>
+              <path d="M0 438 Q 220 396 450 434 T 800 420 L800 500 L0 500 Z" fill="#f2e6ca" opacity=".65"/>
+              <g stroke="#3d4e6c" stroke-opacity=".05" stroke-width="3" fill="none"><path d="M636 88 l26 -15 26 15 0 30 -26 15 -26 -15 Z"/><path d="M80 92 l20 -12 20 12 0 23 -20 12 -20 -12 Z"/></g>
+            </svg></div>
+            <div class="envv vcold"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <defs><linearGradient id="efC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f4f9"/><stop offset=".65" stop-color="#e6ecf4"/><stop offset="1" stop-color="#dce4f0"/></linearGradient></defs>
+              <rect width="800" height="500" fill="url(#efC)"/>
+              <rect y="330" width="800" height="34" fill="#ffffff" opacity=".35"/><rect y="380" width="800" height="22" fill="#ffffff" opacity=".25"/>
+              <path d="M0 436 Q 210 392 430 432 T 800 414 L800 500 L0 500 Z" fill="#dee6f1" opacity=".85"/>
+              <g stroke="#3d4e6c" stroke-opacity=".06" stroke-width="3" fill="none"><path d="M598 78 l26 -15 26 15 0 30 -26 15 -26 -15 Z"/><path d="M92 102 l20 -12 20 12 0 23 -20 12 -20 -12 Z"/></g>
+            </svg></div>
+            <div class="envv vdark"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <defs><radialGradient id="efD" cx=".5" cy=".36" r="1.1"><stop offset="0" stop-color="#2b3450"/><stop offset=".55" stop-color="#1a2136"/><stop offset="1" stop-color="#10141f"/></radialGradient></defs>
+              <rect width="800" height="500" fill="url(#efD)"/>
+              <circle cx="660" cy="92" r="46" fill="#f5b95f" opacity=".1"/><circle cx="660" cy="92" r="24" fill="#ffe3a8" opacity=".14"/>
+              <g fill="#f5b95f"><circle cx="90" cy="70" r="2" opacity=".5"/><circle cx="212" cy="148" r="1.4" opacity=".35"/><circle cx="330" cy="62" r="1.8" opacity=".45"/><circle cx="520" cy="112" r="1.4" opacity=".3"/><circle cx="596" cy="52" r="2" opacity=".45"/><circle cx="728" cy="172" r="1.5" opacity=".4"/><circle cx="152" cy="330" r="1.4" opacity=".25"/><circle cx="688" cy="332" r="1.6" opacity=".3"/><circle cx="420" cy="428" r="1.4" opacity=".25"/></g>
+              <g fill="none" stroke="#7c8db0" stroke-opacity=".13" stroke-width="2"><path d="M640 96 l22 -13 22 13 0 26 -22 13 -22 -13 Z"/><path d="M96 380 l18 -10 18 10 0 21 -18 10 -18 -10 Z"/></g>
+            </svg></div>
+          </div>
+          <div class="env" id="envMid" aria-hidden="true">
+            <div class="envv vwarm"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <path d="M0 470 Q 260 420 520 460 T 800 446 L800 500 L0 500 Z" fill="#ead1a0" opacity=".8"/>
+              <g transform="translate(676,430)" opacity=".9">
+                <ellipse cx="0" cy="26" rx="30" ry="10" fill="#d9b979"/><ellipse cx="0" cy="14" rx="27" ry="12" fill="#e3c384"/>
+                <ellipse cx="0" cy="0" rx="22" ry="12" fill="#d9b979"/><ellipse cx="0" cy="-12" rx="15" ry="10" fill="#e3c384"/>
+                <ellipse cx="0" cy="22" rx="5" ry="6" fill="#7a6a52"/>
+              </g>
+              <g fill="#c98e3f" opacity=".5"><circle cx="118" cy="474" r="4"/><circle cx="176" cy="486" r="3"/><circle cx="88" cy="488" r="3"/><circle cx="238" cy="480" r="3.4"/></g>
+            </svg></div>
+            <div class="envv vpaper"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <path d="M0 476 Q 280 434 540 470 T 800 458 L800 500 L0 500 Z" fill="#ecdcba" opacity=".7"/>
+              <g stroke="#a9761f" stroke-opacity=".1" stroke-width="3" fill="none"><path d="M700 420 l20 -12 20 12 0 23 -20 12 -20 -12 Z"/></g>
+            </svg></div>
+            <div class="envv vcold"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <path d="M0 474 Q 240 432 500 468 T 800 452 L800 500 L0 500 Z" fill="#cfd9e8" opacity=".8"/>
+              <g stroke="#5e6c88" stroke-width="4" stroke-linecap="round" opacity=".3" fill="none">
+                <path d="M84 474 L84 428 M84 446 L66 428 M84 440 L102 424"/>
+              </g>
+            </svg></div>
+            <div class="envv vdark"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <path d="M0 474 Q 260 430 520 466 T 800 452 L800 500 L0 500 Z" fill="#141a2b" opacity=".9"/>
+              <g transform="translate(676,442)" opacity=".95">
+                <ellipse cx="0" cy="22" rx="26" ry="9" fill="#1d2436"/><ellipse cx="0" cy="10" rx="23" ry="10" fill="#232c40"/>
+                <ellipse cx="0" cy="-3" rx="18" ry="10" fill="#1d2436"/>
+                <circle cx="-6" cy="8" r="2.6" fill="#f5b95f" opacity=".9"/><circle cx="7" cy="14" r="2.2" fill="#f5b95f" opacity=".7"/>
+              </g>
+            </svg></div>
+          </div>
+
+          <div class="xpl-poster" id="xplPoster">
+            <svg class="hexbg" viewBox="0 0 800 500" aria-hidden="true"><g fill="none" stroke="#3d4e6c" stroke-width="3">
+              <path d="M0,-34 L29,-17 L29,17 L0,34 L-29,17 L-29,-17 Z" transform="translate(90,80) scale(1.3)"/>
+              <path d="M0,-34 L29,-17 L29,17 L0,34 L-29,17 L-29,-17 Z" transform="translate(710,90) scale(1.7)"/>
+              <path d="M0,-34 L29,-17 L29,17 L0,34 L-29,17 L-29,-17 Z" transform="translate(420,420) scale(1.4)"/>
+            </g></svg>
+            <div style="display:flex;align-items:center;gap:34px">
+              <div data-host="aha" data-size="128"></div>
+              <div style="text-align:left;max-width:400px">
+                <p style="font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--brown);margin-bottom:8px">Compound interest &middot; ~4 minutes</p>
+                <h3 class="xpl-h" style="font-size:31px;margin-bottom:10px">A curiosity-gap hook. (Withhold the payoff.)</h3>
+                <p style="color:var(--stripe);font-size:16px;font-weight:600">One line of setup. No sound needed.</p>
+              </div>
+            </div>
+            <button class="xpl-btn honey" id="xplPlay" style="margin-top:30px" type="button">
+              <svg width="17" height="18" viewBox="0 0 17 18" aria-hidden="true"><path d="M2 1 L16 9 L2 17 Z" fill="currentColor"/></svg>
+              Press play
+            </button>
+          </div>
+
+          <!-- S0 · COLD OPEN (15s) -->
+          <div class="xpl-scene s-black on-dark" data-scene="0">
+            <div class="fi" style="position:absolute;top:52px;left:0;right:0;text-align:center;animation-delay:.2s"><p class="kicker">The number almost everyone gets wrong</p></div>
+            <div class="fu" style="position:absolute;top:120px;left:0;right:0;text-align:center;animation-delay:.6s"><span class="xchip violet lg">$100 / month</span></div>
+            <div class="fu" style="position:absolute;top:200px;left:0;right:0;text-align:center;animation-delay:1.6s"><span class="xchip violet lg">for 40 years</span></div>
+            <div class="g-hero q0" style="top:300px;left:0;right:0;text-align:center">
+              <span style="font-family:var(--font-serif);font-style:italic;font-size:32px;color:#f4f7fc">So&hellip; about $48,000?</span>
+              <span class="ck0" style="display:inline-block;margin-left:16px;font-size:40px;color:#37c08c;font-family:var(--font-scribble);font-weight:700">&check;</span>
+              <span class="no0" style="display:inline-block;margin-left:-34px;font-size:44px;color:#ff6b5e;font-family:var(--font-scribble);font-weight:700">&#10007;</span>
+            </div>
+            <div class="l3 fi" style="animation-delay:9s"><span>the guess that feels right</span></div>
+          </div>
+
+          <!-- S1 · THE DEPOSIT (24s) -->
+          <div class="xpl-scene s-paper" data-scene="1">
+            <div class="fi" style="position:absolute;top:44px;left:0;right:0;text-align:center;animation-delay:.2s"><p class="kicker">Step one: just deposit</p></div>
+            <svg class="g-hero" style="left:120px;top:140px" width="180" height="220" viewBox="0 0 180 220" aria-hidden="true">
+              <path d="M20 14 L160 14 L142 208 L38 208 Z" fill="rgba(61,78,108,.06)" stroke="#3d4e6c" stroke-width="4.5" stroke-linejoin="round"/>
+              <path d="M38 206 L142 206 L145 184 L35 184 Z" fill="rgba(61,78,108,.09)"/>
+              <line x1="30" y1="24" x2="43" y2="196" stroke="rgba(255,255,255,.6)" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            <div class="mwrap1 g-hero" style="left:120px;top:140px;width:180px;height:220px"></div>
+            <div class="fu" style="position:absolute;left:400px;top:150px;animation-delay:.8s">
+              <p class="xpl-h" style="font-size:64px">DEPOSIT</p>
+              <p style="font-family:var(--font-mono);font-weight:800;font-size:28px;color:var(--gold);margin-top:4px">$100/mo</p>
+            </div>
+            <div class="fu t1a" style="position:absolute;left:400px;top:296px;animation-delay:3.2s"><span class="xpl-em" style="font-size:26px">a small amount&hellip;</span></div>
+            <div class="fu t1b" style="position:absolute;left:400px;top:340px;animation-delay:6.2s"><span class="xpl-em" style="font-size:26px">&hellip;every single month.</span></div>
+            <div class="l3 fi" style="animation-delay:10s"><span>the whole habit &middot; money in, on a schedule</span></div>
+          </div>
+
+          <!-- S2 · INTEREST IS THE ARROW (22s) -->
+          <div class="xpl-scene s-warm" data-scene="2">
+            <div class="fi" style="position:absolute;top:44px;left:0;right:0;text-align:center;animation-delay:.2s"><p class="kicker">Interest is the arrow in disguise</p></div>
+            <svg class="g-hero b5" style="left:100px;top:120px" width="140" height="170" viewBox="0 0 140 170" aria-hidden="true">
+              <path d="M16 10 L124 10 L110 160 L30 160 Z" fill="rgba(214,158,46,.22)" stroke="#8a6d1f" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M30 158 L110 158 L112 140 L28 140 Z" fill="rgba(138,109,31,.14)"/>
+              <line x1="24" y1="18" x2="34" y2="148" stroke="rgba(255,255,255,.55)" stroke-width="5" stroke-linecap="round"/>
+              <text x="70" y="95" text-anchor="middle" font-family="Georgia,serif" font-weight="800" font-size="30" fill="#8a6d1f">5%</text>
+            </svg>
+            <svg class="g-hero" style="left:280px;top:236px;overflow:visible" width="330" height="70" viewBox="0 0 330 70" aria-hidden="true">
+              <path class="sh5" d="M8 34 L282 34" fill="none" stroke="#3d4e6c" stroke-width="7" stroke-linecap="round"/>
+              <path class="ah5" d="M266 14 L296 34 L266 54" fill="none" stroke="#3d4e6c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="g-hero c5a" style="left:150px;top:242px"><span class="xchip suf">$100</span></div>
+            <div class="g-hero c5b" style="left:620px;top:242px"><span class="xchip nec">$105</span></div>
+            <div class="fu" style="position:absolute;left:0;right:0;top:368px;text-align:center;animation-delay:8.5s"><span class="xpl-em" style="font-size:24px">same coins &middot; now growing</span></div>
+            <div class="l3 fi" style="animation-delay:10s"><span>interest turns money into more money = Money &rarr; More</span></div>
+          </div>
+
+          <!-- S3 · THE FORCED OVERLAP (30s) — the peak -->
+          <div class="xpl-scene s-warm" data-scene="3">
+            <div class="fi" style="position:absolute;top:44px;left:0;right:0;text-align:center;animation-delay:.2s"><p class="kicker">Interest earns interest &mdash; they can&rsquo;t stay separate</p></div>
+            <div class="fu" style="position:absolute;left:90px;top:116px;animation-delay:.4s">
+              <div style="width:620px;height:46px;border:3px solid #8a6d1f;border-radius:12px;background:rgba(214,158,46,.10);display:flex;align-items:center;justify-content:center;gap:14px">
+                <span class="xpl-h" style="font-size:17px;color:#8a6d1f">EVERY DOLLAR</span>
+                <span class="gbees" style="display:flex;gap:10px;align-items:center"></span>
+              </div>
+            </div>
+            <div class="g-hero tr7" style="left:90px;top:230px;width:620px;height:64px;border:3px dashed rgba(61,78,108,.4);border-radius:12px"></div>
+            <div class="qbar w7" style="left:90px;top:234px;width:340px;background:rgba(61,78,108,.9);color:#f4f7fc;height:56px">PRINCIPAL</div>
+            <div class="qbar s7" style="left:370px;top:234px;width:340px;background:rgba(214,158,46,.85);color:#4a3608;justify-content:flex-end;height:56px">INTEREST</div>
+            <div class="g-hero o7" style="left:370px;top:230px;width:60px;height:64px;border-radius:10px;background:rgba(124,92,214,.6);border:3px solid #7c5cd6"></div>
+            <div class="g-hero ob7a obee" style="left:372px;top:238px"><span class="ring"></span></div>
+            <div class="g-hero ob7b obee" style="left:396px;top:262px"><span class="ring"></span></div>
+            <span class="spark" style="left:372px;top:196px;animation-delay:.2s">&#10022;</span>
+            <span class="spark" style="left:414px;top:308px;font-size:17px;animation-delay:1.2s">&#10023;</span>
+            <div class="g-hero t7" style="left:0;right:0;top:330px;text-align:center"><span class="xpl-em" style="font-size:24px">the interest starts earning too</span></div>
+            <div class="fu" style="position:absolute;left:0;right:0;top:382px;text-align:center;animation-delay:13s">
+              <span class="xchip violet" style="font-size:18px">Principal earns &nbsp;+&nbsp; interest earns &nbsp;&there4;&nbsp; exponential growth</span>
+            </div>
+            <div class="l3 fi" style="animation-delay:15s"><span>money on money on money &rArr; the snowball</span></div>
+          </div>
+
+          <!-- S11 · CTA (holds) -->
+          <div class="xpl-scene s-cta" data-scene="4">
+            <svg class="hexbg" viewBox="0 0 800 500" aria-hidden="true"><g fill="none" stroke="#3d4e6c" stroke-width="3">
+              <path d="M0,-34 L29,-17 L29,17 L0,34 L-29,17 L-29,-17 Z" transform="translate(100,90) scale(1.4)"/>
+              <path d="M0,-34 L29,-17 L29,17 L0,34 L-29,17 L-29,-17 Z" transform="translate(700,410) scale(1.3)"/>
+            </g></svg>
+            <div class="center-col">
+              <h3 class="fu xpl-h" style="font-size:40px;max-width:660px;animation-delay:.3s">That&rsquo;s the whole snowball.</h3>
+              <p class="fu" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:14px;animation-delay:.9s">Start early &mdash; time does the heavy lifting. Here&rsquo;s how to open your first account.</p>
+              <div class="pp" style="margin-top:16px;animation-delay:1.2s"><a class="xpl-btn honey" href="#" style="font-size:19px">Watch: How to Start Investing &rsaquo;</a></div>
+              <p class="fu xpl-h" style="font-size:22px;color:var(--ink);max-width:560px;margin-top:22px;animation-delay:2.6s">Subscribe &mdash; and I&rsquo;ll see you in the next one.</p>
+            </div>
+            <span class="spark" style="left:150px;top:150px;animation-delay:.8s">&#10022;</span>
+            <span class="spark" style="left:636px;top:120px;font-size:17px;animation-delay:2s">&#10023;</span>
+          </div>
+
+          <div class="xpl-dust" aria-hidden="true">
+            <i style="left:6%;animation-duration:21s;animation-delay:-3s"></i>
+            <i style="left:18%;width:4px;height:4px;animation-duration:16s;animation-delay:-11s"></i>
+            <i style="left:33%;animation-duration:24s;animation-delay:-7s;background:var(--stripe)"></i>
+            <i style="left:52%;width:6px;height:6px;animation-duration:19s;animation-delay:-14s"></i>
+            <i style="left:67%;width:4px;height:4px;animation-duration:15s;animation-delay:-5s"></i>
+            <i style="left:81%;animation-duration:22s;animation-delay:-17s;background:var(--gold)"></i>
+            <i style="left:93%;width:4px;height:4px;animation-duration:18s;animation-delay:-9s"></i>
+          </div>
+          <div class="xpl-actor" aria-hidden="true">
+            <div data-host="aha" data-size="88"></div>
+            <svg class="aarm" viewBox="0 0 38 34" aria-hidden="true">
+              <path d="M30 3 L14 19 L21 26 L37 10 Z" fill="#f5b95f" stroke="#3d4e6c" stroke-width="2.4" stroke-linejoin="round"/>
+              <path d="M14 19 L6 30 L21 26 Z" fill="#fdf8ee" stroke="#3d4e6c" stroke-width="2.4" stroke-linejoin="round"/>
+              <path d="M8.5 27.5 L6 30 L9.8 29" fill="#3d4e6c"/>
+            </svg>
+          </div>
+          <div class="env" id="envNear" aria-hidden="true">
+            <div class="envv vlight"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <g fill="none" stroke="#a9761f" stroke-width="8" opacity=".14"><path d="M706 34 l50 -29 50 29 0 58 -50 29 -50 -29 Z"/></g>
+              <g stroke="#3d4e6c" stroke-width="7" stroke-linecap="round" opacity=".12" fill="none">
+                <path d="M22 512 C 18 466 26 438 16 410"/><path d="M46 512 C 50 458 40 430 54 402"/><path d="M72 512 C 66 472 78 448 70 426"/>
+              </g>
+              <g stroke="#a9761f" stroke-width="6" stroke-linecap="round" opacity=".12" fill="none"><path d="M770 512 C 774 470 764 448 774 424"/><path d="M748 512 C 744 476 754 458 746 440"/></g>
+            </svg></div>
+            <div class="envv vdark"><svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+              <g fill="none" stroke="#f4f7fc" stroke-width="8" opacity=".06"><path d="M706 34 l50 -29 50 29 0 58 -50 29 -50 -29 Z"/></g>
+              <g stroke="#f4f7fc" stroke-width="7" stroke-linecap="round" opacity=".07" fill="none">
+                <path d="M22 512 C 18 466 26 438 16 410"/><path d="M46 512 C 50 458 40 430 54 402"/><path d="M72 512 C 66 472 78 448 70 426"/>
+              </g>
+            </svg></div>
+          </div>
+          <div class="xpl-swarm" aria-hidden="true"><span class="mb mb1"></span><span class="mb mb2"></span><span class="mb mb3"></span></div>
+          <div class="xpl-vig" aria-hidden="true"></div>
+          <div class="xpl-wipe" aria-hidden="true"><i class="w1"></i><i class="w2"></i></div>
+          <div class="xpl-grain" aria-hidden="true"></div>
+        </div><!-- /stage -->
+        <div class="xpl-veil"><div class="knob"><svg width="24" height="26" viewBox="0 0 24 26" aria-hidden="true"><path d="M3 1 L22 13 L3 25 Z" fill="#3d4e6c"/></svg></div></div>
+      </div><!-- /stagewrap -->
+
+      <div class="xpl-chrome" id="xplChrome" style="display:none">
+        <button class="xpl-pbtn xpl-nbtn" id="xplPrev" type="button" aria-label="Previous scene"><svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><path d="M9.5 1 L3 6.5 L9.5 12" fill="none" stroke="#3d4e6c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="xpl-pbtn" id="xplToggle" type="button" aria-label="Pause"><span id="xplToggleIcon"></span></button>
+        <button class="xpl-pbtn xpl-nbtn" id="xplNext" type="button" aria-label="Next scene"><svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><path d="M3.5 1 L10 6.5 L3.5 12" fill="none" stroke="#3d4e6c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="xpl-progress" id="xplProgress" role="slider" aria-label="Seek" tabindex="0" aria-valuemin="0" aria-valuemax="100"><div class="fill" id="xplFill"></div><div class="xpl-ticks" id="xplTicks"></div></div>
+        <span class="xpl-time">~1:31 &middot; silent</span>
+      </div>
+    </div>
+
+    <div class="xpl-static">
+      <div class="xpl-frame" style="padding:26px 28px;display:flex;gap:22px;align-items:flex-start">
+        <div data-host="aha" data-size="104"></div>
+        <div>
+          <h3 class="xpl-h" style="font-size:24px;margin-bottom:10px">Compound interest, in one screen.</h3>
+          <p style="color:var(--stripe);font-size:15.5px;line-height:1.6"><b>Deposit</b> a small amount on a schedule &mdash; say $100 a month. <b>Interest</b> is the arrow that turns money into more money: at 5%, $100 becomes $105 without you doing anything. The magic is <b>compounding</b>: that interest starts earning its own interest, so principal and interest can&rsquo;t stay separate &mdash; it&rsquo;s money on money on money. Guess the total of $100/month for 40 years and most people say ~$48,000 (just the deposits). At 7% it&rsquo;s closer to <i>$264,000</i>. The lesson: start early &mdash; time does the heavy lifting.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="sr-only">Full spoken narration of the story here, in order — this doubles as the VO recording script. (Example: "A hundred dollars a month, for forty years. Most people guess forty-eight thousand — just the deposits. The real answer is over a quarter million. Here's the force they're missing…") End on the same forward line as the CTA scene.</p>
+  </div>
+</div>
+
+<!--GSAP_INLINE-->
+
+<script>
+(function(){
+  /* ---------- host mascot factory (swap this SVG string to rebrand) ---------- */
+  var _hostSeq=0;
+  function host(face, size){
+    var uid='b'+(++_hostSeq);
+    var faces={
+      sad:{eyes:'<ellipse cx="-31" cy="-28" rx="8.5" ry="10" fill="#3A342C"/><ellipse cx="31" cy="-28" rx="8.5" ry="10" fill="#3A342C"/><circle cx="-33" cy="-31" r="2.6" fill="#FFF"/><circle cx="29" cy="-31" r="2.6" fill="#FFF"/>',
+        brows:'<path d="M -44,-58 L -20,-52" stroke="#E8B96F" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M 44,-58 L 20,-52" stroke="#E8B96F" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+        mouth:'<path d="M -10,-2 Q 0,-9 10,-2" stroke="#3A342C" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+        blush:'<circle cx="-52" cy="-6" r="7" fill="#F5A9A0" opacity=".35"/><circle cx="52" cy="-6" r="7" fill="#F5A9A0" opacity=".35"/>'},
+      aha:{eyes:'<ellipse cx="-31" cy="-28" rx="10.5" ry="13" fill="#3A342C"/><ellipse cx="31" cy="-28" rx="10.5" ry="13" fill="#3A342C"/><circle cx="-34" cy="-32" r="3.2" fill="#FFF"/><circle cx="28" cy="-32" r="3.2" fill="#FFF"/>',
+        brows:'<path d="M -44,-64 Q -31,-70 -18,-64" stroke="#E8B96F" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M 18,-64 Q 31,-70 44,-64" stroke="#E8B96F" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+        mouth:'<ellipse cx="0" cy="-1" rx="7" ry="9" fill="#3A342C"/>',
+        blush:'<circle cx="-52" cy="-8" r="8" fill="#F5A9A0" opacity=".5"/><circle cx="52" cy="-8" r="8" fill="#F5A9A0" opacity=".5"/>'},
+      happy:{eyes:'<ellipse cx="-31" cy="-28" rx="8.5" ry="10" fill="#3A342C"/><ellipse cx="31" cy="-28" rx="8.5" ry="10" fill="#3A342C"/><circle cx="-28" cy="-32" r="2.8" fill="#FFF"/><circle cx="34" cy="-32" r="2.8" fill="#FFF"/>',
+        brows:'<path d="M -42,-62 Q -31,-66 -20,-62" stroke="#E8B96F" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M 20,-62 Q 31,-66 42,-62" stroke="#E8B96F" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+        mouth:'<path d="M -12,-7 A 12,10 0 0 0 12,-7 Z" fill="#3A342C"/><ellipse cy="-1" rx="5" ry="3" fill="#F5A9A0"/>',
+        blush:'<circle cx="-52" cy="-8" r="8" fill="#F5A9A0" opacity=".5"/><circle cx="52" cy="-8" r="8" fill="#F5A9A0" opacity=".5"/>'}
+    };
+    var f=faces[face]||faces.happy;
+    return '<svg width="'+size+'" height="'+(size*292/240)+'" viewBox="-120 -152 240 292" style="overflow:visible" role="img" aria-label="host mascot">'
+      + '<defs><clipPath id="bclip'+uid+'"><ellipse cx="0" cy="0" rx="78" ry="88"/></clipPath></defs>'
+      + '<ellipse cx="0" cy="122" rx="62" ry="11" fill="#E6D7BC"/>'
+      + '<g class="hwrap xbob" style="animation-delay:-'+((size%7)*0.35).toFixed(2)+'s">'
+      + '<g class="hwl"><ellipse cx="-58" cy="-70" rx="36" ry="19" fill="#FFF" opacity=".7" stroke="#E8DFD0" stroke-width="2" transform="rotate(-32 -58 -70)"/></g>'
+      + '<g class="hwr"><ellipse cx="58" cy="-70" rx="36" ry="19" fill="#FFF" opacity=".7" stroke="#E8DFD0" stroke-width="2" transform="rotate(32 58 -70)"/></g>'
+      + '<path d="M -24,-84 C -30,-104 -44,-110 -50,-118" stroke="#C9A05C" stroke-width="5" fill="none" stroke-linecap="round"/>'
+      + '<path d="M 24,-84 C 30,-104 44,-110 50,-118" stroke="#C9A05C" stroke-width="5" fill="none" stroke-linecap="round"/>'
+      + '<circle cx="-52" cy="-121" r="7.5" fill="#F5B95F"/><circle cx="52" cy="-121" r="7.5" fill="#F5B95F"/>'
+      + '<ellipse cx="0" cy="0" rx="78" ry="88" fill="#FFE3A8"/>'
+      + '<g clip-path="url(#bclip'+uid+')"><rect x="-90" y="26" width="180" height="24" rx="12" fill="#5E6C88" opacity=".9"/><rect x="-90" y="62" width="180" height="24" rx="12" fill="#5E6C88" opacity=".9"/></g>'
+      + '<g transform="translate(0,48)"><path d="M0,0 L-22,-12 L-22,12 Z" fill="#F5B95F" stroke="#3D4E6C" stroke-width="3" stroke-linejoin="round"/><path d="M0,0 L22,-12 L22,12 Z" fill="#F5B95F" stroke="#3D4E6C" stroke-width="3" stroke-linejoin="round"/><circle r="6.5" fill="#3D4E6C"/></g>'
+      + '<ellipse cx="-76" cy="24" rx="11" ry="17" fill="#F2C87E" transform="rotate(16 -76 24)"/><ellipse cx="76" cy="24" rx="11" ry="17" fill="#F2C87E" transform="rotate(-16 76 24)"/>'
+      + '<rect x="-56" y="-52" width="50" height="44" rx="16" fill="#FFF" opacity=".55"/><rect x="6" y="-52" width="50" height="44" rx="16" fill="#FFF" opacity=".55"/>'
+      + '<g class="heyes" style="animation-delay:-'+((size%5)*0.5).toFixed(2)+'s">'+f.eyes+'</g>'
+      + '<rect x="-56" y="-52" width="50" height="44" rx="16" fill="none" stroke="#3D4E6C" stroke-width="4.5"/><rect x="6" y="-52" width="50" height="44" rx="16" fill="none" stroke="#3D4E6C" stroke-width="4.5"/><path d="M -6,-32 L 6,-32" stroke="#3D4E6C" stroke-width="4.5" stroke-linecap="round"/>'
+      + f.brows + f.mouth + f.blush + '</g></svg>';
+  }
+  document.querySelectorAll('[data-host]').forEach(function(el){ el.innerHTML = host(el.getAttribute('data-host'), parseInt(el.getAttribute('data-size'),10)||120); });
+
+  /* mini-bee: the population character (Kurzgesagt-style cast member) */
+  function minion(size,badges){
+    var w=size||26,h=w*0.8;
+    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 26 21" style="overflow:visible" aria-hidden="true">'
+      +'<g class="mwl"><ellipse cx="9" cy="5.6" rx="4.6" ry="2.8" fill="#fff" opacity=".8" stroke="#d8cdb8" stroke-width="1" transform="rotate(-24 9 5.6)"/></g>'
+      +'<g class="mwr"><ellipse cx="17" cy="5.6" rx="4.6" ry="2.8" fill="#fff" opacity=".8" stroke="#d8cdb8" stroke-width="1" transform="rotate(24 17 5.6)"/></g>'
+      +'<ellipse cx="13" cy="12.5" rx="9.5" ry="7.4" fill="#FFE3A8" stroke="#3d4e6c" stroke-width="2.2"/>'
+      +'<path d="M8 6.8 Q13 4.6 18 6.8 L18 9 Q13 7.4 8 9 Z" fill="#5E6C88" opacity="0"/>'
+      +'<rect x="6" y="10" width="14" height="3.4" rx="1.7" fill="#5E6C88" opacity=".85"/>'
+      +'<rect x="7" y="15" width="12" height="3" rx="1.5" fill="#5E6C88" opacity=".85"/>'
+      +'<circle cx="10" cy="10" r="1.4" fill="#3A342C"/><circle cx="16" cy="10" r="1.4" fill="#3A342C"/>'
+      +(badges&&badges.indexOf('w')>-1?'<circle cx="6" cy="16" r="3" fill="#3d4e6c" stroke="#fffdf6" stroke-width="1.2"/>':'')
+      +(badges&&badges.indexOf('s')>-1?'<circle cx="20" cy="16" r="3" fill="#f5b95f" stroke="#8a6d1f" stroke-width="1.2"/>':'')
+      +'</svg>';
+  }
+  document.querySelectorAll('.mb').forEach(function(el){ el.innerHTML=minion(26); });
+  (function(){ var g=document.querySelector('.gbees'); if(g){ for(var i=0;i<8;i++){ var sp=document.createElement('span'); sp.innerHTML=minion(20); g.appendChild(sp);} } })();
+  document.querySelectorAll('.ob7a').forEach(function(el){ el.innerHTML+=minion(28,'ws'); });
+  document.querySelectorAll('.ob7b').forEach(function(el){ el.innerHTML+=minion(28,'ws'); });
+
+  /* ---------- scene clock (same harness as the flagship) ---------- */
+  var SCENES=[15,24,22,30,999];
+  var TOTAL=0; for(var _i=0;_i<SCENES.length;_i++){ if(SCENES[_i]<999) TOTAL+=SCENES[_i]; }
+  var REDUCED=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var W=800,H=500;
+  var root=document.getElementById('xplRoot'),wrap=document.getElementById('xplStageWrap'),stage=document.getElementById('xplStage'),
+      poster=document.getElementById('xplPoster'),chrome=document.getElementById('xplChrome'),fill=document.getElementById('xplFill'),
+      toggle=document.getElementById('xplToggle'),toggleIcon=document.getElementById('xplToggleIcon'),ticks=document.getElementById('xplTicks');
+  if(!root||!wrap||!stage||!poster||!chrome||!fill||!toggle||!toggleIcon){ return; }
+  var scenes=Array.prototype.slice.call(stage.querySelectorAll('.xpl-scene'));
+  var ICON_PAUSE='<svg width="15" height="15" viewBox="0 0 15 15" aria-hidden="true"><rect x="2" y="1" width="4" height="13" rx="1" fill="#3d4e6c"/><rect x="9" y="1" width="4" height="13" rx="1" fill="#3d4e6c"/></svg>';
+  var ICON_PLAY='<svg width="15" height="15" viewBox="0 0 15 15" aria-hidden="true"><path d="M3 1 L13 7.5 L3 14 Z" fill="#3d4e6c"/></svg>';
+  var ICON_REPLAY='<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 A6 6 0 1 1 2.5 5.5" fill="none" stroke="#3d4e6c" stroke-width="2.4" stroke-linecap="round"/><path d="M2 2 L2.7 5.8 L6.4 4.8 Z" fill="#3d4e6c"/></svg>';
+  var status='poster', cur=0, timer=null, sceneStart=0, carry=0, autoPaused=false;
+
+  var CH_STARTS=[1,2,3];
+  function sumTo(idx){ var e=0; for(var i=0;i<idx;i++){ if(SCENES[i]<999) e+=SCENES[i]; } return e; }
+  if(ticks){ CH_STARTS.forEach(function(si){ var i=document.createElement('i'); i.style.left=(sumTo(si)/TOTAL*100)+'%'; ticks.appendChild(i); }); }
+
+  function fitScale(){ var s=(wrap.clientWidth||W)/W; stage.style.transform='scale('+s+')'; wrap.style.height=(H*s)+'px'; }
+  if(!REDUCED){ if(window.ResizeObserver){ new ResizeObserver(fitScale).observe(wrap); } window.addEventListener('resize',fitScale); fitScale(); }
+
+  /* ═══════════ GSAP layer ═══════════ */
+  var HASG=typeof gsap!=='undefined';
+  if(HASG){
+    gsap.registerPlugin(DrawSVGPlugin, MotionPathPlugin, MorphSVGPlugin, SplitText, Physics2DPlugin, CustomEase, CustomWiggle, CustomBounce, Flip, ScrambleTextPlugin);
+    CustomWiggle.create('wigSettle',{wiggles:4,type:'easeOut'});   /* tween rotation:'+=n' — returns to start, replay-safe */
+    CustomWiggle.create('wigBig',{wiggles:6,type:'anticipate'});
+    CustomBounce.create('thud',{strength:.58,squash:2.4});          /* paired eases: 'thud' + 'thud-squash' */
+  }
+  var actor=document.querySelector('.xpl-actor');
+  var armEl=actor?actor.querySelector('.aarm'):null;
+  if(HASG&&actor){ gsap.set(actor,{x:840,y:380}); gsap.set(armEl,{rotation:7}); }
+  var curTl=null;
+  function q(i,sel){ return scenes[i]?scenes[i].querySelector(sel):null; }
+  function qa(i,sel){ return scenes[i]?Array.prototype.slice.call(scenes[i].querySelectorAll(sel)):[]; }
+
+  /* one-time SplitText registry — NEVER new SplitText inside ACTS (re-runs nest spans) */
+  var SPL={};
+  function splitOnce(key,sel){
+    if(!SPL[key]&&HASG){ var el=stage.querySelector(sel); if(el) SPL[key]=new SplitText(el,{type:'chars'}); }
+    return SPL[key];
+  }
+  /* drop with real weight: CustomBounce position + synced squash (reset targets with scaleX:1,scaleY:1,transformOrigin:'50% 100%') */
+  function drop(tl,targets,time,dur,stag){
+    tl.to(targets,{opacity:1,duration:.15,stagger:stag||0},time)
+      .to(targets,{y:0,duration:dur,ease:'thud',stagger:stag||0},time)
+      .to(targets,{scaleX:1.45,scaleY:.55,duration:dur,ease:'thud-squash',stagger:stag||0},time);
+  }
+  /* physics2D celebration/debris burst — index-seeded (replay-identical); cleanup happens in runScene teardown */
+  function burst(tl,scene,x,y,n,time,colors){
+    for(var i=0;i<n;i++){
+      var p=document.createElement('i'); p.className='pfx';
+      p.style.left=x+'px'; p.style.top=y+'px';
+      p.style.background=colors[i%colors.length];
+      if(i%4===0) p.style.borderRadius='50%';
+      scene.appendChild(p);
+      gsap.set(p,{opacity:0,x:0,y:0,rotation:0});
+      tl.set(p,{opacity:1},time);
+      tl.to(p,{duration:1.7,ease:'none',rotation:(i%2?1:-1)*(140+(i*37)%200),
+        physics2D:{velocity:150+(i*67)%160,angle:-90+((i*53)%140-70),gravity:430}},time);
+      tl.to(p,{opacity:0,duration:.45},time+1.05);
+    }
+  }
+
+  /* host flight plans: [fraction, x, y, pointing] — arrivals track the VO beats */
+  var FL={
+    0:[[0,850,300,0],[.62,850,300,0],[.75,620,320,1]],
+    1:[[0,620,320,0],[.08,252,108,1],[.42,252,108,1],[.55,610,120,1]],
+    2:[[0,610,120,0],[.08,184,84,1],[.28,184,84,1],[.45,430,148,1],[.62,634,148,1]],
+    3:[[0,634,148,0],[.08,620,90,1],[.22,620,90,1],[.34,412,138,1],[.72,412,138,1],[.82,640,320,0]],
+    4:[[0,640,320,0],[.15,655,325,0]]
+  };
+
+  function fly(tl,wp,dur){
+    if(!HASG||!actor) return;
+    for(var i=1;i<wp.length;i++){
+      var t0=wp[i-1][0]*dur,t1=wp[i][0]*dur,d=Math.max(.4,t1-t0);
+      var x0=wp[i-1][1],y0=wp[i-1][2],x1=wp[i][1],y1=wp[i][2];
+      var dist=Math.hypot(x1-x0,y1-y0);
+      if(dist>240){ /* long legs swoop along a curve */
+        tl.to(actor,{duration:d,ease:'power2.inOut',motionPath:{path:[{x:(x0+x1)/2,y:Math.min(y0,y1)-70},{x:x1,y:y1}],curviness:1.4}},t0);
+      } else {
+        tl.to(actor,{x:x1,y:y1,duration:d,ease:'power2.inOut'},t0);
+      }
+      tl.to(armEl,{rotation:wp[i][3]?-34:7,duration:.4,ease:'power2.out'},Math.max(0,t1-.35));
+      if(wp[i][3]&&!wp[i-1][3]){ tl.to(armEl,{rotation:'-=8',duration:.55,ease:'wigSettle'},t1+.12); }   /* pencil tap-tap on arrival */
+    }
+  }
+
+  /* marble helpers: lay marbles in bucket rows (stage coords inside a wrapper div) */
+  function layMarbles(wrapper,count){
+    wrapper.innerHTML='';
+    var rows=[[168,50,4],[150,46,5],[132,42,6],[114,38,6]]; /* [y, xStart, n] in 180x220 local */
+    var made=0,els=[];
+    for(var r=0;r<rows.length&&made<count;r++){
+      var y=rows[r][0],x0=rows[r][1],n=rows[r][2],gap=(168-2*x0)/(n-1)-14;
+      for(var c=0;c<n&&made<count;c++){
+        var m=document.createElement('i'); m.className='marble';
+        m.style.left=(x0+c*(14+gap))+'px'; m.style.top=y+'px';
+        wrapper.appendChild(m); els.push(m); made++;
+      }
+    }
+    return els;
+  }
+
+  /* per-scene GSAP choreography */
+  var ACTS={
+    0:function(tl){
+      var qq=q(0,'.q0'),ck=q(0,'.ck0'),no=q(0,'.no0');
+      gsap.set(qq,{opacity:0,y:24}); gsap.set(ck,{opacity:0,scale:.3}); gsap.set(no,{opacity:0,scale:3});
+      tl.to(qq,{opacity:1,y:0,duration:.7,ease:'power2.out'},3.2)
+        .to(ck,{opacity:1,scale:1,duration:.5,ease:'back.out(2.4)'},4.6)
+        .to(ck,{rotation:8,yoyo:true,repeat:3,duration:.14},5.4)
+        .to(ck,{opacity:0,scale:.3,rotation:-30,duration:.35,ease:'power2.in'},7.2)
+        .to(no,{opacity:1,scale:1,duration:.4,ease:'power4.out'},7.45)
+        .fromTo(scenes[0],{backgroundColor:'rgba(212,72,61,.0)'},{duration:.18,yoyo:true,repeat:1,backgroundColor:'rgba(212,72,61,.14)'},7.45);
+    },
+    1:function(tl){
+      var els=layMarbles(q(1,'.mwrap1'),21);
+      gsap.set(els,{y:-300,opacity:0});
+      tl.to(els[0],{y:0,opacity:1,duration:.9,ease:'bounce.out'},1.2);
+      tl.to(els.slice(1),{y:0,opacity:1,duration:.8,ease:'bounce.out',stagger:.09},6.6);
+    },
+    2:function(tl){
+      var bkt=q(2,'.b5'),sh=q(2,'.sh5'),ah=q(2,'.ah5'),ca=q(2,'.c5a'),cb=q(2,'.c5b');
+      /* marbles as stage divs */
+      var wrap5=scenes[2];
+      qa(2,'.m5').forEach(function(m){m.remove();});
+      var ms=[];
+      for(var i=0;i<8;i++){ var m=document.createElement('i'); m.className='marble m5'; m.style.left='170px'; m.style.top='200px'; wrap5.appendChild(m); ms.push(m); }
+      gsap.set(bkt,{transformOrigin:'85% 90%',rotation:0});
+      gsap.set(ms,{opacity:0,x:0,y:0});
+      gsap.set([sh,ah],{drawSVG:'0%'});
+      gsap.set([ca,cb],{opacity:0,scale:.4});
+      tl.to(bkt,{rotation:-84,duration:1.1,ease:'power2.inOut'},1.6);
+      ms.forEach(function(m,i){
+        tl.to(m,{opacity:1,duration:.12},2.5+i*.1);
+        tl.to(m,{motionPath:{path:[{x:60,y:-60},{x:140+i*34,y:64}],curviness:1.6},duration:.9,ease:'power1.in'},2.5+i*.1);
+      });
+      tl.to(ms,{opacity:0,duration:.5},4.6)
+        .to(sh,{drawSVG:'100%',duration:.8,ease:'power2.inOut'},4.5)
+        .to(ah,{drawSVG:'100%',duration:.3},5.3)
+        .to(ca,{opacity:1,scale:1,duration:.5,ease:'back.out(2)'},5.9)
+        .to(cb,{opacity:1,scale:1,duration:.5,ease:'back.out(2)'},6.3)
+        .to(bkt,{rotation:-64,duration:.8,ease:'power1.out'},4.8);
+    },
+    3:function(tl){
+      var w=q(3,'.w7'),s=q(3,'.s7'),o=q(3,'.o7'),t=q(3,'.t7');
+      gsap.set(w,{y:-140,opacity:0}); gsap.set(s,{y:-140,opacity:0,x:0});
+      gsap.set(o,{opacity:0,scale:.6,transformOrigin:'center'}); gsap.set(t,{opacity:0,y:16});
+      tl.to(w,{y:0,opacity:1,duration:.8,ease:'bounce.out'},1.4)
+        .to(s,{y:0,opacity:1,duration:.8,ease:'bounce.out'},3.2)
+        .to(s,{x:26,duration:.4,ease:'power2.out'},4.6)   /* tries to dodge right */
+        .to(s,{x:0,duration:.5,ease:'power2.inOut'},5.3)  /* no room — slides back */
+        .to(s,{x:14,duration:.3,yoyo:true,repeat:1},6.1)  /* one more wiggle */
+        .to(o,{opacity:1,scale:1,duration:.5,ease:'back.out(2.2)'},7.4)
+        .to(o,{boxShadow:'0 0 22px 6px rgba(124,92,214,.65)',yoyo:true,repeat:-1,duration:1.1},8)
+        .to(t,{opacity:1,y:0,duration:.6},8.4);
+      var b1=q(3,'.ob7a'),b2=q(3,'.ob7b');
+      gsap.set([b1,b2],{opacity:0,scale:.3,transformOrigin:'center'});
+      tl.to(b1,{opacity:1,scale:1,duration:.5,ease:'back.out(2.6)'},9)
+        .to(b2,{opacity:1,scale:1,duration:.5,ease:'back.out(2.6)'},9.4);
+    },
+  };
+  function runScene(i){
+    if(!HASG) return;
+    if(curTl){ curTl.kill(); curTl=null; }
+    Array.prototype.slice.call(stage.querySelectorAll('.pfx')).forEach(function(p){p.remove();});   /* no frozen debris survives a cut */
+    var d=SCENES[i]>=999?26:SCENES[i];
+    var tl=gsap.timeline();
+    var _dir=(i%2?1:-1);   /* parallax camera dolly on every cut */
+    tl.to('#envFar',{x:_dir*6,duration:1.1,ease:'power2.out'},0);
+    tl.to('#envMid',{x:_dir*14,duration:1.1,ease:'power2.out'},0);
+    tl.to('#envNear',{x:_dir*26,duration:1.1,ease:'power2.out'},0);
+    var wp=stage.querySelector('.xpl-wipe');
+    if(wp){ tl.set(wp,{scaleX:_dir},0);   /* mirror so cuts alternate direction with the dolly */
+            tl.fromTo(wp.querySelector('.w1'),{xPercent:0},{xPercent:430,duration:.8,ease:'power3.inOut'},0);
+            tl.fromTo(wp.querySelector('.w2'),{xPercent:0},{xPercent:430,duration:.8,ease:'power3.inOut'},.09); }
+    if(FL[i]) fly(tl,FL[i],d);
+    if(ACTS[i]) ACTS[i](tl,d);
+    curTl=tl;
+  }
+
+  function showScene(i){ scenes.forEach(function(sc){ sc.classList.remove('is-active'); }); void stage.offsetWidth; if(scenes[i]) scenes[i].classList.add('is-active');
+    var el=scenes[i], mood=el.classList.contains('s-black')?'dark':el.classList.contains('s-cold')?'cold':el.classList.contains('s-paper')?'paper':'warm';
+    stage.setAttribute('data-mood',mood);
+    runScene(i); }
+
+  function sceneDur(i){ return SCENES[i]>=999 ? TOTAL : SCENES[i]; }
+  function elapsedTotal(live){ var e=0; for(var i=0;i<cur;i++) e+=sceneDur(i); var inS=carry/1000+(live&&status==='playing'?(performance.now()-sceneStart)/1000:0); e+=Math.min(sceneDur(cur),inS); return e; }
+  var raf=null;
+  function paintOnce(){ fill.style.width=Math.min(100,(elapsedTotal(true)/TOTAL)*100)+'%'; }
+  function paintProgress(){ paintOnce(); if(status==='playing') raf=requestAnimationFrame(paintProgress); }
+  function startProgress(){ fill.style.transition='none'; cancelAnimationFrame(raf); paintOnce(); raf=requestAnimationFrame(paintProgress); }
+  function stopProgress(){ cancelAnimationFrame(raf); }
+
+  function schedule(dur){ clearTimeout(timer); timer=setTimeout(advance, dur*1000); }
+  function advance(){ var next=cur+1; if(next>=scenes.length){ done(); return; } cur=next; carry=0; sceneStart=performance.now(); showScene(cur); paintOnce(); if(SCENES[cur]>=999){ done(); return; } schedule(SCENES[cur]); }
+  function play(){ if(REDUCED) return; poster.style.display='none'; chrome.style.display='flex'; cur=0; carry=0; autoPaused=false; sceneStart=performance.now(); status='playing'; root.classList.remove('paused'); toggleIcon.innerHTML=ICON_PAUSE; toggle.setAttribute('aria-label','Pause'); showScene(0); startProgress(); schedule(SCENES[0]); }
+  function pause(){ if(status!=='playing') return; clearTimeout(timer); carry+=performance.now()-sceneStart; status='paused'; root.classList.add('paused'); stopProgress(); if(curTl)curTl.pause(); toggleIcon.innerHTML=ICON_PLAY; toggle.setAttribute('aria-label','Play'); }
+  function resume(){ if(status!=='paused') return; sceneStart=performance.now(); status='playing'; root.classList.remove('paused'); startProgress(); if(curTl)curTl.play(); toggleIcon.innerHTML=ICON_PAUSE; toggle.setAttribute('aria-label','Pause'); schedule(Math.max(0, SCENES[cur]-carry/1000)); }
+  function done(){ clearTimeout(timer); stopProgress(); status='done'; root.classList.remove('paused'); fill.style.width='100%'; toggleIcon.innerHTML=ICON_REPLAY; toggle.setAttribute('aria-label','Replay'); }
+
+  function seek(i){
+    i=Math.max(0,Math.min(scenes.length-1,i));
+    clearTimeout(timer); stopProgress(); autoPaused=false;
+    poster.style.display='none'; chrome.style.display='flex';
+    cur=i; carry=0; sceneStart=performance.now();
+    root.classList.remove('paused'); showScene(i); paintOnce();
+    if(SCENES[i]>=999){ status='playing'; done(); return; }
+    status='playing'; toggleIcon.innerHTML=ICON_PAUSE; toggle.setAttribute('aria-label','Pause');
+    startProgress(); schedule(SCENES[i]);
+  }
+  function sceneAt(frac){ var t=frac*TOTAL,e=0; for(var i=0;i<SCENES.length;i++){ var d=sceneDur(i); if(t<e+d||SCENES[i]>=999) return i; e+=d; } return scenes.length-1; }
+
+  var _playBtn=document.getElementById('xplPlay');
+  if(_playBtn) _playBtn.addEventListener('click',function(e){e.stopPropagation();play();});
+  toggle.addEventListener('click',function(e){ e.stopPropagation(); autoPaused=false; if(status==='playing') pause(); else if(status==='paused') resume(); else play(); });
+  wrap.addEventListener('click',function(e){ if(e.target.closest('a,button')) return; autoPaused=false; if(status==='playing') pause(); else if(status==='paused') resume(); else if(status==='poster') play(); });
+
+  var prevBtn=document.getElementById('xplPrev'), nextBtn=document.getElementById('xplNext'), progressEl=document.getElementById('xplProgress');
+  if(prevBtn) prevBtn.addEventListener('click',function(e){ e.stopPropagation(); seek(cur-1); });
+  if(nextBtn) nextBtn.addEventListener('click',function(e){ e.stopPropagation(); seek(cur+1); });
+  if(progressEl){ progressEl.addEventListener('click',function(e){ e.stopPropagation(); var r=progressEl.getBoundingClientRect(); seek(sceneAt(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)))); }); }
+  document.addEventListener('keydown',function(e){
+    if(REDUCED||(e.target&&e.target.closest&&e.target.closest('input,textarea,select'))) return;
+    if(chrome.style.display==='none') return;
+    if(e.key==='ArrowLeft'){ e.preventDefault(); seek(cur-1); }
+    else if(e.key==='ArrowRight'){ e.preventDefault(); seek(cur+1); }
+  });
+
+  if(window.IntersectionObserver && !REDUCED){
+    var io=new IntersectionObserver(function(entries){ var en=entries[entries.length-1];
+      if(en.intersectionRatio>0.55){ if(status==='poster') play(); else if(status==='paused'&&autoPaused){ autoPaused=false; resume(); } }
+      else if(en.intersectionRatio<0.25){ if(status==='playing'){ autoPaused=true; pause(); } }
+    },{threshold:[0.25,0.55]}); io.observe(root);
+  }
+  document.addEventListener('visibilitychange',function(){ if(document.hidden&&status==='playing'){ autoPaused=true; pause(); } else if(!document.hidden&&status==='paused'&&autoPaused){ autoPaused=false; resume(); } });
+
+  window.__xpl={ goto:function(i){ clearTimeout(timer); stopProgress(); autoPaused=false; poster.style.display='none'; chrome.style.display='flex'; status='paused'; root.classList.remove('paused'); cur=i; carry=0; showScene(i); paintOnce(); }, play:play, pause:pause, status:function(){return status;}, scenes:function(){return scenes.length;}, tl:function(){return curTl;} };
+})();
+</script>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "基准片 MG 风格"
+  short_description: "复刻并迁移基准片式口播 MG 的逻辑、视觉与验收流程"
+  default_prompt: "Use $remotion-reference-fidelity to turn this talking-head script into a faithful, reusable Remotion MG package."

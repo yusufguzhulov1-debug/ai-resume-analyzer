@@ -1,0 +1,7 @@
+interface:
+  display_name: "Demo Video Creation"
+  short_description: "Build polished SaaS demo videos from a URL."
+  default_prompt: "Use $demo-video-creation-skill to create a 60-90 second 4K product demo video from this company website."
+
+policy:
+  allow_implicit_invocation: true

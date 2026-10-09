@@ -1,0 +1,6 @@
+interface:
+  display_name: "Publish and Analyze"
+  short_description: "Export, cover, schedule after approval, then learn from results"
+  default_prompt: "Use $publish-and-analyze to prepare this approved cut for posting, show me the package and, after my go, schedule it and plan the next test."
+policy:
+  allow_implicit_invocation: true

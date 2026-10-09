@@ -1,0 +1,77 @@
+{
+  "id": "three-assets",
+  "title": "Assets (Three.js)",
+  "description": "Bringing real material into Three.js scenes so no frame is blank: asset imports and their type declarations, images and screenshots at true aspect, logos rasterised crisp from SVG or extruded from the real path data with a bevel, device frames, user footage transcoded to WebM and seeked from the frame through the loading barrier (never played), fonts, confetti, piles of identical objects, resizable outlines, and why audio goes on the timeline with place-audio instead of in a scene. Load it when a Three.js scene uses a logo, screenshot, photo, recording, font, confetti or any file from assets/.",
+  "summary": "Logos, screenshots, device frames, seeked footage and fonts in Three.js scenes, loaded so no frame ships blank.",
+  "kind": "technique",
+  "category": "Craft",
+  "tags": [
+    "assets",
+    "threejs",
+    "logos",
+    "screenshots",
+    "footage",
+    "confetti"
+  ],
+  "aspects": [
+    "16:9",
+    "9:16",
+    "1:1",
+    "4:5"
+  ],
+  "duration": {
+    "minSeconds": 1,
+    "maxSeconds": 180
+  },
+  "engines": [
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "Remote files and fonts come into assets/ before a scene uses them."
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Footage is trimmed and transcoded to WebM, and its audio extracted."
+    },
+    {
+      "kind": "capability",
+      "id": "place-audio",
+      "why": "Sound goes on the timeline, never in a scene."
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "A blank, black or stretched texture only shows in a frame."
+    }
+  ],
+  "models": [],
+  "triggers": [
+    "put our logo in the video",
+    "show this screenshot on a phone",
+    "use my screen recording",
+    "the image shows up blank",
+    "the video is black in the export",
+    "make our logo 3D",
+    "add background music",
+    "add confetti when the number lands"
+  ],
+  "templates": [
+    "samsung-pay-fintech-app-launch-video",
+    "fintech-app-launch-video",
+    "p-doom-music-video",
+    "notchbrowser-app-launch-video",
+    "crypto-launch-video",
+    "moonlight-app-launch-video",
+    "types-of-databases",
+    "x-numbers-launch-video"
+  ],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.4.1",
+  "icon": "🖼️"
+}

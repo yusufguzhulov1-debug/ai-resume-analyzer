@@ -1,0 +1,90 @@
+{
+  "id": "ugc-scripting",
+  "title": "UGC scripting",
+  "description": "Writing the body and CTA of a short-form ad: the word budget per runtime and per section, six frameworks (PAS, AIDA, BAB, FAB, 4P, star-story-solution) with the audience each fits, the body's rules, CTAs that read as a recommendation, writing for text-to-speech (numbers, acronyms and names as spoken), and narration written as timed, cue-segmented lines the picture can cut against. Load it when writing or fixing the middle and end of an ad; the opening belongs to ugc-hooks.",
+  "summary": "Body and CTA for short ads: word budgets, six frameworks, recommendation-shaped CTAs, TTS-ready wording and cue-timed lines.",
+  "kind": "reference",
+  "category": "UGC ads",
+  "tags": [
+    "ugc",
+    "scripting",
+    "copywriting",
+    "voiceover",
+    "pas",
+    "cta"
+  ],
+  "aspects": [
+    "9:16",
+    "1:1",
+    "4:5",
+    "16:9"
+  ],
+  "duration": {
+    "minSeconds": 6,
+    "maxSeconds": 60
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "ugc-ad-foundations"
+    },
+    {
+      "kind": "skill",
+      "id": "ugc-hooks"
+    },
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "capability",
+      "id": "pick-voice",
+      "why": "One voice per project, chosen before the first line is generated."
+    },
+    {
+      "kind": "capability",
+      "id": "voiceover",
+      "why": "Turns the cue-segmented lines into narration clips with word timings."
+    },
+    {
+      "kind": "capability",
+      "id": "place-audio",
+      "why": "Each line goes on the VO track at its beat's start plus a few frames."
+    },
+    {
+      "kind": "capability",
+      "id": "project-overview",
+      "why": "Check each line's length against where the picture actually cuts."
+    }
+  ],
+  "models": [
+    {
+      "purpose": "voice",
+      "model": "ElevenLabs v3",
+      "via": "voiceover",
+      "note": "Conversational, not narrator. Flat through the problem."
+    }
+  ],
+  "triggers": [
+    "write the script for this ad",
+    "my script is too long for 30 seconds",
+    "what call to action should the ad end on",
+    "turn this into a PAS script",
+    "how many words fit in a 15 second ad",
+    "rewrite this so it sounds less like an ad",
+    "the voiceover mispronounces our numbers"
+  ],
+  "templates": [
+    "gojiberry-launch-video"
+  ],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.0",
+  "icon": "✍️"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fisheye Motion"
+  short_description: "Screen-photo style fisheye + moire + vignette effect, with Remotion focus push-in and highlight slide-in video output."
+  default_prompt: "Use $fisheye-motion to apply a screen-photo style fisheye effect to this image. Clone https://github.com/vibe-motion/fisheye-motion, put the source image into the Remotion project's public/ directory, locate the target region the user wants to focus on (estimate normalized 0..1 coordinates visually, then verify with a rendered frame), configure focusFrom/focusTo, rect, and the timeline in motion/config.js, render with pnpm run remotion:render (H.264 mp4 or transparent ProRes mov), and deliver the video plus an optional GIF preview."

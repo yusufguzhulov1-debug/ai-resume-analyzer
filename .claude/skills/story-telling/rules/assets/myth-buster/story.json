@@ -1,0 +1,93 @@
+{
+  "_template": "Myth versus fact, 5 scenes, about 45s, landscape. Alternate: myth stated flat, then the correction carrying the number. Keep one accent colour and let the stat card do the correcting; two colours for right and wrong reads as heavy handed.",
+  "slug": "replace-me",
+  "compositionId": "ReplaceMe",
+  "orientation": "landscape",
+  "fps": 30,
+  "title": {
+    "eyebrow": "MYTH VERSUS FACT",
+    "headline": "What most people get wrong",
+    "subline": "And what the data says"
+  },
+  "voice": {
+    "speaker": "shubh",
+    "pace": 1.05,
+    "temperature": 0.6,
+    "languageCode": "en-IN"
+  },
+  "style": {
+    "artPrompt": "clean isometric vector illustration, bold outlines, limited palette of deep navy, warm amber and off white, simple geometric shapes, soft long shadows, editorial infographic mood without any labels, no text, no lettering, no numbers, no watermark",
+    "accent": "#FFD166",
+    "background": "#04060A",
+    "displayFont": "BricolageGrotesque",
+    "textFont": "Inter"
+  },
+  "references": {},
+  "scenes": [
+    {
+      "id": 0,
+      "narration": "THE BELIEF. State the common belief exactly as people say it, without mocking it. The viewer may hold it.",
+      "stat": null,
+      "images": [
+        {
+          "id": 1,
+          "prompt": "A scene showing the belief in action, ordinary people, everyday setting, flat even light."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "narration": "WHY IT SPREAD. The reasonable-sounding logic behind the belief. This is what earns the correction a hearing.",
+      "stat": null,
+      "images": [
+        {
+          "id": 2,
+          "prompt": "A metaphor for the intuitive but wrong model, isometric, cool palette."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "narration": "THE CORRECTION. What is actually true, with the number spelled as words and shown on the card.",
+      "stat": {
+        "value": "38%",
+        "label": "ACTUAL FIGURE, 2026 STUDY"
+      },
+      "images": [
+        {
+          "id": 3,
+          "prompt": "A metaphor for the correct model, same object family as the previous scene but reconfigured, warm key light."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "narration": "THE EVIDENCE. Where the correction comes from, named and dated. One source, stated once.",
+      "stat": null,
+      "images": [
+        {
+          "id": 4,
+          "prompt": "An image standing for the evidence, a study, a measurement or a record, tactile and physical."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "narration": "WHAT TO DO INSTEAD. The practical change, in one sentence. Do not restate the myth here.",
+      "stat": null,
+      "images": [
+        {
+          "id": 5,
+          "prompt": "A person acting on the corrected understanding, resolved posture, brighter palette."
+        }
+      ]
+    }
+  ],
+  "outro": {
+    "headline": "The corrected line",
+    "subline": "SOURCE AND DATE",
+    "imageId": 3,
+    "durationInFrames": 85
+  },
+  "music": null
+}

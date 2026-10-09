@@ -1,0 +1,6 @@
+interface:
+  display_name: "Style: Paper Grid"
+  short_description: "White grid pane above the speaker, one animated UI artifact per line"
+  default_prompt: "Use $paper-grid with $edit-video to edit this tool explainer with a white grid pane and clean UI motion graphics above me."
+policy:
+  allow_implicit_invocation: true

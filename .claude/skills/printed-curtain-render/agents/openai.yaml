@@ -1,0 +1,4 @@
+interface:
+  display_name: "Printed Curtain Render"
+  short_description: "Build interactive artwork-woven curtain simulations"
+  default_prompt: "Use $printed-curtain-render to turn my artwork into an interactive woven curtain simulation."

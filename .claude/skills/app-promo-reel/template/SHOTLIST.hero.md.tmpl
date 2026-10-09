@@ -1,0 +1,9 @@
+# Shot list
+
+One row per scene. The scene cell is the scene id in `src.html.tmpl` (`s1`). If you cannot say why a
+scene exists, it does not belong in the render. Edit the rows when you add, remove or rename a scene.
+Do not delete this file: `build.py` checks it only while it exists.
+
+| scene | purpose | entry state | exit state |
+| --- | --- | --- | --- |
+| s1 | The whole loop: a phone and a headline card move, then return to rest, so the clip repeats with no visible seam | Every animated property is at its t=0 pose | Every animated property is back at its t=0 pose, with the last 5 % of the loop at rest |

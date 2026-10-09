@@ -1,0 +1,144 @@
+{
+  "id": "freeform-video",
+  "title": "Freeform video",
+  "description": "The fallback when no other skill owns the request: a custom video of any kind, such as a birthday clip, a talk or event intro, an event countdown, an abstract loop, a visual for a song, an invitation, a quote card or an internal update. Covers a three-concept pitch before building, a five-line plan, per-format defaults (length, aspect, style family, energy curve, sound), the timing triad for every element, beat sheets for 10, 20, 30 and 60 seconds, loop and countdown rules, and frame-checked finishing. Load it when search finds no clear format match.",
+  "summary": "The fallback for anything without a format: three concepts, a five-line plan, one idea developed, built and checked well.",
+  "kind": "workflow",
+  "category": "Craft",
+  "tags": [
+    "custom",
+    "general",
+    "fallback",
+    "personal",
+    "loop",
+    "countdown",
+    "intro"
+  ],
+  "aspects": [
+    "16:9",
+    "9:16",
+    "1:1",
+    "4:5"
+  ],
+  "duration": {
+    "minSeconds": 5,
+    "maxSeconds": 180
+  },
+  "engines": [
+    "hyperframes",
+    "react",
+    "three"
+  ],
+  "requires": [
+    {
+      "kind": "skill",
+      "id": "direction"
+    },
+    {
+      "kind": "skill",
+      "id": "motion-language"
+    },
+    {
+      "kind": "skill",
+      "id": "sound-design"
+    },
+    {
+      "kind": "skill",
+      "id": "launch-taste"
+    },
+    {
+      "kind": "capability",
+      "id": "capture-frames",
+      "why": "One frame per beat proves the plan made it to screen."
+    },
+    {
+      "kind": "capability",
+      "id": "save-asset",
+      "why": "The user's photos, logos and song."
+    },
+    {
+      "kind": "capability",
+      "id": "music",
+      "why": "A track for the piece, legally sourced."
+    },
+    {
+      "kind": "capability",
+      "id": "sfx",
+      "why": "Hits on the key moments instead of silence."
+    },
+    {
+      "kind": "capability",
+      "id": "ffmpeg",
+      "why": "Loudness and the loop-point check."
+    },
+    {
+      "kind": "skill",
+      "id": "three-look",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-type",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-transitions",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-camera",
+      "engines": [
+        "three"
+      ]
+    },
+    {
+      "kind": "skill",
+      "id": "three-assets",
+      "engines": [
+        "three"
+      ]
+    }
+  ],
+  "route": {
+    "deliverable": "A custom video that fits no named format, built around one developed idea",
+    "inputs": [
+      "brief"
+    ],
+    "priority": 100,
+    "askFirst": [
+      "Where will it play, and how long should it be?",
+      "What should someone feel or do after watching?",
+      "What personal material is there: names, photos, a song?"
+    ]
+  },
+  "models": [],
+  "triggers": [
+    "a birthday video for my friend",
+    "make a cool intro for my talk",
+    "an abstract looping visual",
+    "countdown video for our event",
+    "a visual for this song",
+    "make me a video",
+    "animated invitation for our party",
+    "a farewell video for a colleague"
+  ],
+  "templates": [
+    "p-doom-music-video",
+    "genmotion-brand-grid",
+    "dont-blink-gpt-6-astra",
+    "nike-brand-guide-video"
+  ],
+  "author": {
+    "name": "GenMotion"
+  },
+  "version": "2.0.3",
+  "icon": "✨"
+}
